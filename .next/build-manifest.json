@@ -31,11 +31,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/catalogo.js"
-    ],
-    "/tickets/[id]": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/tickets/[id].js"
     ]
   },
   "ampFirstPages": []
