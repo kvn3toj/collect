@@ -11,10 +11,10 @@ handle_error() {
     exit 1
 }
 
-# Verificar que estamos en la rama master
+# Verificar que estamos en la rama main
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$CURRENT_BRANCH" != "master" ]; then
-    handle_error "No estás en la rama master. Por favor, cambia a master antes de desplegar."
+if [ "$CURRENT_BRANCH" != "main" ]; then
+    handle_error "No estás en la rama main. Por favor, cambia a main antes de desplegar."
 fi
 
 # Asegurarse de que no hay cambios sin commitear
