@@ -1,8 +1,1 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
-  "/catalogo": "pages/catalogo.js",
-  "/nosotros": "pages/nosotros.js",
-  "/": "pages/index.js"
-}
+{"/_app":"pages/_app.js","/_document":"pages/_document.js","/contacto":"pages/contacto.html","/nosotros":"pages/nosotros.html","/_error":"pages/_error.js","/tickets/[id]":"pages/tickets/[id].html","/":"pages/index.html","/catalogo":"pages/catalogo.js","/404":"pages/404.html"}
