@@ -12,13 +12,19 @@ npm install
 echo "Building the application..."
 npm run build
 
-# Mover los archivos generados al directorio público
-echo "Moving files to public directory..."
-cp -r out/* .
-cp public/.htaccess .
+# Crear directorio público si no existe
+echo "Creating public directory..."
+mkdir -p public_html
+
+# Mover archivos construidos al directorio público
+echo "Moving built files to public directory..."
+cp -r .next public_html/
+cp -r public/* public_html/
+cp package.json public_html/
+cp package-lock.json public_html/
 
 # Limpiar archivos innecesarios
 echo "Cleaning up..."
-rm -rf node_modules .next out src
+rm -rf node_modules
 
 echo "Deployment completed!" 
