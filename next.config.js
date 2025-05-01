@@ -1,14 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
   images: {
-    unoptimized: true,
+    domains: ['aretrust.store'],
   },
   // Configuración del dominio
-  assetPrefix: process.env.NODE_ENV === 'production' ? 'https://aretrust.store' : '',
   basePath: '',
-  // Deshabilitar la generación de archivos de desarrollo en producción
+  // Optimizaciones de producción
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       config.optimization.minimize = true;
