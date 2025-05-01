@@ -1,0 +1,577 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Elegant Gold Ring",
+      "description": "A beautiful handcrafted gold ring with intricate details.",
+      "price": 799.99,
+      "discountPrice": 699.99,
+      "category": "rings",
+      "images": [
+        null,
+        null
+      ],
+      "inStock": true,
+      "specifications": {
+        "metal": "gold-18k",
+        "weight": "7g",
+        "size": "7"
+      },
+      "tags": [
+        "gold",
+        "elegant",
+        "gift"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Diamond Necklace",
+      "description": "Stunning diamond necklace perfect for special occasions.",
+      "price": 1299.99,
+      "discountPrice": null,
+      "category": "necklaces",
+      "images": [
+        null,
+        null
+      ],
+      "inStock": true,
+      "specifications": {
+        "metal": "white-gold",
+        "weight": "12g",
+        "length": "18 inches"
+      },
+      "tags": [
+        "diamond",
+        "premium",
+        "gift"
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Platinum Bracelet",
+      "description": "Elegant platinum bracelet with a modern design.",
+      "price": 899.99,
+      "discountPrice": 799.99,
+      "category": "bracelets",
+      "images": [
+        null,
+        null
+      ],
+      "inStock": true,
+      "specifications": {
+        "metal": "platinum",
+        "weight": "15g",
+        "size": "Adjustable"
+      },
+      "tags": [
+        "platinum",
+        "modern",
+        "trendy"
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Rose Gold Earrings",
+      "description": "Beautiful rose gold earrings with small diamonds.",
+      "price": 499.99,
+      "discountPrice": null,
+      "category": "earrings",
+      "images": [
+        null,
+        null
+      ],
+      "inStock": true,
+      "specifications": {
+        "metal": "rose-gold",
+        "weight": "5g",
+        "style": "Drop"
+      },
+      "tags": [
+        "rose-gold",
+        "diamond",
+        "elegant"
+      ]
+    },
+    {
+      "codigo": "EM001",
+      "nombre": "Anillo Esmeralda Clásico",
+      "descripcion": "Elegante anillo de oro blanco 18k con esmeralda colombiana talla esmeralda de la más alta calidad. Diseño atemporal que realza la belleza natural de la piedra.",
+      "descripcionCorta": "Anillo oro blanco con esmeralda premium",
+      "tipoJoya": "ANILLO",
+      "tipoMetal": "ORO_BLANCO_18K",
+      "corteEsmeralda": "EMERALD_CUT",
+      "calidadEsmeralda": "PREMIUM",
+      "origenEsmeralda": "COLOMBIA_MUZO",
+      "quilatesEsmeralda": 1.2,
+      "precio": 4500,
+      "stock": 5,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": ["/images/products/anillo-esmeralda-clasico.jpg"],
+      "imagenesDetalle": [],
+      "slug": "anillo-esmeralda-clasico",
+      "id": "WtC0lzF"
+    },
+    {
+      "codigo": "EM002",
+      "nombre": "Collar Esmeralda Gota",
+      "descripcion": "Deslumbrante collar con esmeralda en forma de gota, engarzada en oro amarillo 18k. La piedra proviene de las minas de Muzo y presenta un color verde intenso característico.",
+      "descripcionCorta": "Collar oro amarillo con esmeralda gota",
+      "tipoJoya": "COLLAR",
+      "tipoMetal": "ORO_AMARILLO_18K",
+      "corteEsmeralda": "PEAR_CUT",
+      "calidadEsmeralda": "PREMIUM",
+      "origenEsmeralda": "COLOMBIA_MUZO",
+      "quilatesEsmeralda": 0.8,
+      "precio": 3800,
+      "stock": 3,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": ["/images/products/collar-esmeralda-gota.jpg"],
+      "imagenesDetalle": [],
+      "slug": "collar-esmeralda-gota",
+      "id": "01R907H"
+    },
+    {
+      "codigo": "EM003",
+      "nombre": "Aretes Esmeralda Vintage",
+      "descripcion": "Par de aretes vintage con esmeraldas colombianas talla oval, montadas en oro rosa 18k. Diseño inspirado en la época art déco con acabados artesanales.",
+      "descripcionCorta": "Aretes oro rosa con esmeraldas",
+      "tipoJoya": "ARETES",
+      "tipoMetal": "ORO_ROSA_18K",
+      "corteEsmeralda": "OVAL_CUT",
+      "calidadEsmeralda": "PREMIUM",
+      "origenEsmeralda": "COLOMBIA_MUZO",
+      "quilatesEsmeralda": 0.5,
+      "precio": 2900,
+      "stock": 4,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/aretes-esmeralda-vintage.jpg"],
+      "imagenesDetalle": [],
+      "slug": "aretes-esmeralda-vintage",
+      "id": "M123JlX"
+    },
+    {
+      "id": "joya-001",
+      "codigo": "AN-PL-01",
+      "nombre": "Anillo Plata Tallado Cabujón con Circones",
+      "descripcion": "Anillo de plata con esmeralda central tallada en cabujón, rodeada de circones.",
+      "descripcionCorta": "Anillo plata cabujón y circones",
+      "tipoJoya": "ANILLO",
+      "tipoMetal": "PLATA",
+      "corteEsmeralda": "CABUJON",
+      "calidadEsmeralda": "ESTANDAR",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": null,
+      "precio": 2000000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": ["/images/products/anillo-cabujon-circones.jpg"],
+      "imagenesDetalle": [],
+      "slug": "anillo-plata-cabujon-circones"
+    },
+    {
+      "id": "joya-002",
+      "codigo": "AR-PL-01",
+      "nombre": "Par de Aretes Plata Trabajo Detallado",
+      "descripcion": "Par de aretes en plata con trabajo detallado y esmeraldas.",
+      "descripcionCorta": "Aretes plata detallados",
+      "tipoJoya": "ARETES",
+      "tipoMetal": "PLATA",
+      "corteEsmeralda": null,
+      "calidadEsmeralda": "ESTANDAR",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": null,
+      "precio": 1000000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/par-aretes-plata.jpg"],
+      "imagenesDetalle": [],
+      "slug": "par-aretes-plata-detallado"
+    },
+    {
+      "id": "lote-001",
+      "codigo": "LOTE-001",
+      "nombre": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
+      "descripcion": "Lote de 187 esmeraldas naturales colombianas, calidad comercial, color verde limón, cristal con tono.",
+      "descripcionCorta": "100ct (187pzs) Verde Limón Comercial",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "COMERCIAL",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 100,
+      "precio": 35000000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/lote-1-187-piedras.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-1-esmeraldas-comerciales-100ct"
+    },
+    {
+      "id": "lote-002",
+      "codigo": "LOTE-002",
+      "nombre": "Lote #2 Esmeraldas Finas Muzo (7 Piedras)",
+      "descripcion": "Lote de 7 esmeraldas naturales colombianas de Muzo, calidad fina (M-3+), color verde intenso.",
+      "descripcionCorta": "31.8ct (7pzs) Verde Muzo Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "FINA",
+      "origenEsmeralda": "COLOMBIA_MUZO",
+      "quilatesEsmeralda": 31.8,
+      "precio": 600000000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": ["/images/products/lote-2-7-piedras.jpg"],
+      "imagenesDetalle": [
+        "/images/products/lote-2-7-piedras-detalle-1.jpg",
+        "/images/products/lote-2-7-piedras-detalle-2.jpg",
+        "/images/products/lote-2-7-piedras-detalle-3.jpg"
+      ],
+      "slug": "lote-2-esmeraldas-finas-muzo-31ct"
+    },
+    {
+      "id": "lote-003",
+      "codigo": "LOTE-003",
+      "nombre": "Lote #3 Esmeraldas Extra Finas (6 Piedras)",
+      "descripcion": "Lote de 6 esmeraldas naturales colombianas, calidad extra fina.",
+      "descripcionCorta": "17.7ct (6pzs) Extra Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRA_FINA",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 17.7,
+      "precio": 283200000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": ["/images/products/lote-3-6-piedras.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-3-esmeraldas-extrafinas-17ct"
+    },
+    {
+      "id": "lote-004",
+      "codigo": "LOTE-004",
+      "nombre": "Lote #4 Esmeraldas Finas (5 Piedras)",
+      "descripcion": "Lote de 5 esmeraldas naturales colombianas, calidad fina.",
+      "descripcionCorta": "15.5ct (5pzs) Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "FINA",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 15.5,
+      "precio": 248000000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/lote-4-5-piedras.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-4-esmeraldas-finas-15ct"
+    },
+    {
+      "id": "lote-005",
+      "codigo": "LOTE-005",
+      "nombre": "Lote #5 Esmeraldas Extra Finas (4 Piedras)",
+      "descripcion": "Lote de 4 esmeraldas naturales colombianas, calidad extra fina.",
+      "descripcionCorta": "12.3ct (4pzs) Extra Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRA_FINA",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 12.3,
+      "precio": 196800000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": ["/images/products/lote-5-4-piedras.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-5-esmeraldas-extrafinas-12ct"
+    },
+    {
+      "id": "lote-006",
+      "codigo": "LOTE-006",
+      "nombre": "Lote #6 Esmeraldas Extra Finas (2 Piedras)",
+      "descripcion": "Lote de 2 esmeraldas naturales colombianas, calidad extra fina.",
+      "descripcionCorta": "6.2ct (2pzs) Extra Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRA_FINA",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 6.2,
+      "precio": 99200000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/lote-6-2-piedras.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-6-esmeraldas-extrafinas-6ct"
+    },
+    {
+      "id": "lote-007",
+      "codigo": "LOTE-007",
+      "nombre": "Lote #7 Esmeraldas Finas (3 Piedras)",
+      "descripcion": "Lote de 3 esmeraldas naturales colombianas, calidad fina.",
+      "descripcionCorta": "9.8ct (3pzs) Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "FINA",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 9.8,
+      "precio": 156800000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/lote-7-3-piedras.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-7-esmeraldas-finas-9ct"
+    },
+    {
+      "id": "lote-008",
+      "codigo": "LOTE-008",
+      "nombre": "Lote #8 Esmeraldas Extra Finas (2 Piedras)",
+      "descripcion": "Lote de 2 esmeraldas naturales colombianas, calidad extra fina.",
+      "descripcionCorta": "8.4ct (2pzs) Extra Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRA_FINA",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 8.4,
+      "precio": 134400000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/lote-8-2-piedras.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-8-esmeraldas-extrafinas-8ct"
+    },
+    {
+      "id": "lote-009",
+      "codigo": "LOTE-009",
+      "nombre": "Lote #9 Esmeralda en Bruto (1 Piedra)",
+      "descripcion": "Piedra de esmeralda en bruto natural colombiana, calidad 6/8.",
+      "descripcionCorta": "32.8ct Bruto 6/8",
+      "tipoJoya": "GEMA_BRUTO",
+      "tipoMetal": null,
+      "corteEsmeralda": "BRUTO",
+      "calidadEsmeralda": "BRUTO_6_8",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 32.8,
+      "precio": 18000000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": ["/images/products/lote-9-bruto.jpg"],
+      "imagenesDetalle": [],
+      "slug": "lote-9-esmeralda-bruto-32ct"
+    },
+    {
+      "id": "lote-010",
+      "codigo": "LOTE-010",
+      "nombre": "Lote #10 Esmeraldas Extra Finas Muzo (4 Piedras)",
+      "descripcion": "Lote exclusivo de 4 esmeraldas naturales de Muzo, calidad extra fina. Piedras con color verde intenso característico de la región, excelente transparencia y cristal. Ideal para joyería de alta gama.",
+      "descripcionCorta": "14.5ct (4pzs) Verde Muzo Extra Fina",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRA_FINA",
+      "origenEsmeralda": "COLOMBIA_MUZO",
+      "quilatesEsmeralda": 14.5,
+      "precio": 232000000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": ["/images/products/lote-10-4-piedras-muzo.jpg"],
+      "imagenesDetalle": [
+        "/images/products/lote-10-4-piedras-muzo-detalle-1.jpg",
+        "/images/products/lote-10-4-piedras-muzo-detalle-2.jpg"
+      ],
+      "slug": "lote-10-esmeraldas-extrafinas-muzo-14ct"
+    }
+  ],
+  "products_categories": [
+    "rings",
+    "necklaces",
+    "bracelets",
+    "earrings"
+  ],
+  "categories": [
+    {
+      "id": "rings",
+      "name": "Rings",
+      "slug": "rings",
+      "description": "Elegant rings for all occasions"
+    },
+    {
+      "id": "necklaces",
+      "name": "Necklaces",
+      "slug": "necklaces",
+      "description": "Stunning necklaces to complete your look"
+    },
+    {
+      "id": "bracelets",
+      "name": "Bracelets",
+      "slug": "bracelets",
+      "description": "Beautiful bracelets for your wrist"
+    },
+    {
+      "id": "earrings",
+      "name": "Earrings",
+      "slug": "earrings",
+      "description": "Elegant earrings to enhance your style"
+    }
+  ],
+  "jewelry_types": [
+    {
+      "id": "LOTE_GEMAS",
+      "name": "Lote de Gemas",
+      "description": "Lotes de esmeraldas en bruto o talladas"
+    },
+    {
+      "id": "GEMA_BRUTO",
+      "name": "Gema en Bruto",
+      "description": "Esmeraldas en estado natural sin tallar"
+    },
+    {
+      "id": "ANILLO",
+      "name": "Anillo",
+      "description": "Anillos con esmeraldas"
+    },
+    {
+      "id": "COLLAR",
+      "name": "Collar",
+      "description": "Collares con esmeraldas"
+    },
+    {
+      "id": "ARETES",
+      "name": "Aretes",
+      "description": "Aretes con esmeraldas"
+    }
+  ],
+  "metals": [
+    {
+      "id": "ORO_BLANCO_18K",
+      "name": "Oro Blanco 18K",
+      "description": "Oro blanco de 18 quilates"
+    },
+    {
+      "id": "ORO_AMARILLO_18K",
+      "name": "Oro Amarillo 18K",
+      "description": "Oro amarillo de 18 quilates"
+    },
+    {
+      "id": "ORO_ROSA_18K",
+      "name": "Oro Rosa 18K",
+      "description": "Oro rosa de 18 quilates"
+    },
+    {
+      "id": "PLATA",
+      "name": "Plata",
+      "description": "Plata de ley"
+    }
+  ],
+  "gem_cuts": [
+    {
+      "id": "VARIOS",
+      "name": "Varios",
+      "description": "Múltiples cortes en un lote"
+    },
+    {
+      "id": "BRUTO",
+      "name": "Bruto",
+      "description": "Sin tallar"
+    },
+    {
+      "id": "EMERALD_CUT",
+      "name": "Talla Esmeralda",
+      "description": "Corte rectangular con facetas escalonadas"
+    },
+    {
+      "id": "PEAR_CUT",
+      "name": "Talla Pera",
+      "description": "Corte en forma de gota"
+    },
+    {
+      "id": "OVAL_CUT",
+      "name": "Talla Oval",
+      "description": "Corte ovalado"
+    },
+    {
+      "id": "CABUJON",
+      "name": "Cabujón",
+      "description": "Corte redondeado sin facetas"
+    }
+  ],
+  "gem_qualities": [
+    {
+      "id": "COMERCIAL",
+      "name": "Comercial",
+      "description": "Calidad comercial"
+    },
+    {
+      "id": "FINA",
+      "name": "Fina",
+      "description": "Calidad fina"
+    },
+    {
+      "id": "EXTRA_FINA",
+      "name": "Extra Fina",
+      "description": "Calidad extra fina"
+    },
+    {
+      "id": "PREMIUM",
+      "name": "Premium",
+      "description": "Calidad premium"
+    },
+    {
+      "id": "ESTANDAR",
+      "name": "Estándar",
+      "description": "Calidad estándar"
+    },
+    {
+      "id": "BRUTO_6_8",
+      "name": "Bruto 6/8",
+      "description": "Calidad bruta 6/8"
+    }
+  ],
+  "gem_origins": [
+    {
+      "id": "COLOMBIA",
+      "name": "Colombia",
+      "description": "Esmeraldas colombianas"
+    },
+    {
+      "id": "COLOMBIA_MUZO",
+      "name": "Colombia (Muzo)",
+      "description": "Esmeraldas de la mina de Muzo"
+    }
+  ],
+  "auth_login": [
+    {
+      "id": "1",
+      "email": "admin@example.com",
+      "password": "admin123",
+      "response": {
+        "access_token": "mock-jwt-token",
+        "user": {
+          "id": "1",
+          "email": "admin@example.com",
+          "firstName": "Admin",
+          "lastName": "User",
+          "role": "ADMIN"
+        }
+      }
+    }
+  ]
+}

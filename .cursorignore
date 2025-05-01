@@ -1,0 +1,7 @@
+# Cursor ignore configuration
+# Este archivo configura qué archivos ignorar para Cursor AI
+
+# Específicamente permitir archivos .env para edición
+!.env
+!project/.env
+!*.env 
