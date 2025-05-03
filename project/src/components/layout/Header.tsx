@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   AppBar, 
   Toolbar, 
@@ -34,6 +34,7 @@ const Header: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+  const location = useLocation();
   
   const { isAuthenticated, user, logout } = useAuthStore();
   const { items, openCart, getTotalItems } = useCartStore();
@@ -45,6 +46,13 @@ const Header: React.FC = () => {
   
   const cartItemCount = getTotalItems();
   const userMenuOpen = Boolean(userMenuAnchor);
+
+  // Función para verificar si una ruta está activa
+  const isPathActive = (path: string) => {
+    return path === '/' 
+      ? location.pathname === path 
+      : location.pathname.startsWith(path);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -166,35 +174,120 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation Links */}
           {!isMobile && (
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                gap: { md: 3, lg: 4 },
-                ml: 4,
-                alignItems: 'center'
-              }}
-            >
-              {['Collections', 'Emeralds', 'Jewelry', 'Custom Design'].map((item) => (
-                <Button
-                  key={item}
-                  component={RouterLink}
-                  to={item === 'Collections' ? '/products' : `/products?category=${item.toLowerCase()}`}
-                  sx={{
-                    color: textColor,
-                    fontFamily: "'Lato', sans-serif",
-                    fontSize: '0.95rem',
-                    fontWeight: 500,
-                    letterSpacing: '0.02em',
-                    transition: 'color 0.3s ease',
-                    '&:hover': {
-                      color: hoverColor,
-                      backgroundColor: 'transparent',
-                    }
-                  }}
-                >
-                  {item}
-                </Button>
-              ))}
+            <Box sx={{ display: 'flex', alignItems: 'center', ml: 4 }}>
+              <Button
+                id="home-nav"
+                component={RouterLink}
+                to="/"
+                sx={{
+                  color: textColor,
+                  fontFamily: "'Lato', sans-serif",
+                  fontWeight: isScrolled ? 500 : 600,
+                  mx: 1,
+                  fontSize: '0.9rem',
+                  letterSpacing: '0.02em',
+                  position: 'relative',
+                  py: 1.5,
+                  textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
+                  '&:hover': {
+                    backgroundColor: 'transparent',
+                    color: hoverColor,
+                  },
+                  '&:after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    width: isPathActive('/') ? '100%' : '0%',
+                    height: 2,
+                    bgcolor: isPathActive('/') ? hoverColor : 'transparent',
+                    transition: 'all 0.3s ease',
+                    transform: 'translateX(-50%)',
+                  },
+                  '&:hover:after': {
+                    width: '70%',
+                    bgcolor: hoverColor,
+                  },
+                }}
+              >
+                Inicio
+              </Button>
+              
+              <Button
+                id="catalog-nav"
+                component={RouterLink}
+                to="/products"
+                sx={{
+                  color: textColor,
+                  fontFamily: "'Lato', sans-serif",
+                  fontWeight: isScrolled ? 500 : 600,
+                  mx: 1,
+                  fontSize: '0.9rem',
+                  letterSpacing: '0.02em',
+                  position: 'relative',
+                  py: 1.5,
+                  textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
+                  '&:hover': {
+                    backgroundColor: 'transparent',
+                    color: hoverColor,
+                  },
+                  '&:after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    width: isPathActive('/products') ? '100%' : '0%',
+                    height: 2,
+                    bgcolor: isPathActive('/products') ? hoverColor : 'transparent',
+                    transition: 'all 0.3s ease',
+                    transform: 'translateX(-50%)',
+                  },
+                  '&:hover:after': {
+                    width: '70%',
+                    bgcolor: hoverColor,
+                  },
+                }}
+              >
+                Colección
+              </Button>
+              
+              <Button
+                id="configurator-nav"
+                component={RouterLink}
+                to="/configurator"
+                sx={{
+                  color: textColor,
+                  fontFamily: "'Lato', sans-serif",
+                  fontWeight: isScrolled ? 500 : 600,
+                  mx: 1,
+                  fontSize: '0.9rem',
+                  letterSpacing: '0.02em',
+                  position: 'relative',
+                  py: 1.5,
+                  textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
+                  '&:hover': {
+                    backgroundColor: 'transparent',
+                    color: hoverColor,
+                  },
+                  '&:after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    width: isPathActive('/configurator') ? '100%' : '0%',
+                    height: 2,
+                    bgcolor: isPathActive('/configurator') ? hoverColor : 'transparent',
+                    transition: 'all 0.3s ease',
+                    transform: 'translateX(-50%)',
+                  },
+                  '&:hover:after': {
+                    width: '70%',
+                    bgcolor: hoverColor,
+                  },
+                }}
+              >
+                Configurador
+              </Button>
             </Box>
           )}
 
@@ -213,6 +306,7 @@ const Header: React.FC = () => {
               sx={{
                 color: textColor,
                 transition: 'color 0.3s ease',
+                textShadow: isScrolled ? 'none' : '0 1px 2px rgba(0,0,0,0.15)',
                 '&:hover': {
                   color: hoverColor,
                   backgroundColor: iconBgHover,
@@ -222,34 +316,47 @@ const Header: React.FC = () => {
               <Search size={20} />
             </IconButton>
 
-            <IconButton
-              onClick={openCart}
-              sx={{
-                color: textColor,
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: hoverColor,
-                  backgroundColor: iconBgHover,
-                }
-              }}
-            >
-              <Badge 
-                badgeContent={cartItemCount} 
-                color="primary"
+            <Box sx={{ ml: 1 }}>
+              <IconButton
+                id="cart-nav"
+                aria-label="shopping cart"
+                onClick={openCart}
                 sx={{
-                  '& .MuiBadge-badge': {
-                    fontFamily: "'Lato', sans-serif",
-                    fontSize: '0.7rem',
-                    fontWeight: 600,
-                    minWidth: 18,
-                    height: 18,
-                    borderRadius: 9,
-                  }
+                  color: textColor,
+                  position: 'relative',
+                  transition: 'all 0.2s ease',
+                  textShadow: isScrolled ? 'none' : '0 1px 2px rgba(0,0,0,0.15)',
+                  '&:hover': {
+                    backgroundColor: iconBgHover,
+                    color: hoverColor,
+                  },
                 }}
               >
                 <ShoppingBag size={20} />
-              </Badge>
-            </IconButton>
+                {cartItemCount > 0 && (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: -2,
+                      right: -2,
+                      backgroundColor: theme.palette.secondary.main,
+                      color: theme.palette.secondary.contrastText,
+                      width: 18,
+                      height: 18,
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.7rem',
+                      fontWeight: 'bold',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    }}
+                  >
+                    {cartItemCount}
+                  </Box>
+                )}
+              </IconButton>
+            </Box>
 
             {isAuthenticated ? (
               <>
@@ -258,6 +365,7 @@ const Header: React.FC = () => {
                   sx={{
                     color: textColor,
                     transition: 'color 0.3s ease',
+                    textShadow: isScrolled ? 'none' : '0 1px 2px rgba(0,0,0,0.15)',
                     '&:hover': {
                       backgroundColor: iconBgHover,
                       color: hoverColor,
@@ -272,6 +380,7 @@ const Header: React.FC = () => {
                       height: 28,
                       border: `2px solid ${isScrolled ? theme.palette.primary.main : '#FFFFFF'}`,
                       transition: 'border-color 0.3s ease',
+                      boxShadow: isScrolled ? 'none' : '0 2px 4px rgba(0,0,0,0.2)',
                     }}
                   />
                 </IconButton>

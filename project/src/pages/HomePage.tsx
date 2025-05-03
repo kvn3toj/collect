@@ -42,12 +42,12 @@ const HomePage: React.FC = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        // Comentado para despliegue visual estático en Vercel
-        // const response = await productService.getAllProducts();
-        // setProducts(response.products || []);
+        // Usar el servicio de productos para obtener datos reales
+        const response = await productService.getAllProducts();
+        setProducts(response.products || []);
         
-        // Usando datos mock estáticos para visualización
-        setProducts([]);
+        // Comentado: Usando datos mock estáticos para visualización
+        // setProducts([]);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -98,11 +98,11 @@ const HomePage: React.FC = () => {
   const getCategoryImage = (categoryName: string): string => {
     const lower = categoryName.toLowerCase();
     if (lower.includes('ring') || lower.includes('anillo')) {
-      return '/images/products/anillo-cabujon-circones.jpg';
+      return '/images/products/lote-2.jpg';
     } else if (lower.includes('necklace') || lower.includes('collar')) {
       return '/images/products/lote-9.jpg';
     } else if (lower.includes('earring') || lower.includes('arete')) {
-      return '/images/products/par-aretes-plata.jpg';
+      return '/images/products/lote-3.jpg';
     }
     return '/images/placeholder-category.jpg';
   };
@@ -252,16 +252,16 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* Featured Products Section (Carrusel con lotes específicos) */}
-      <Box sx={{ mt: { xs: 6, md: 10 } }}>
-        <Container maxWidth="lg" sx={{ mb: { xs: 8, md: 12 } }}>
-          <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+      <Box sx={{ mt: { xs: 10, md: 16 } }}>
+        <Container maxWidth="lg" sx={{ mb: { xs: 10, md: 16 } }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
             <Typography
               variant="h2"
               component="h2"
               sx={{
                 fontFamily: "'Playfair Display', serif",
-                fontSize: { xs: '2rem', md: '2.75rem' },
-                mb: 2,
+                fontSize: { xs: '2.25rem', md: '3rem' },
+                mb: 2.5,
                 fontWeight: 700,
                 letterSpacing: '-0.02em',
                 color: theme.palette.text.primary,
@@ -275,10 +275,11 @@ const HomePage: React.FC = () => {
               sx={{ 
                 maxWidth: '700px', 
                 mx: 'auto',
-                fontSize: { xs: '1rem', md: '1.125rem' },
-                lineHeight: 1.6,
+                fontSize: { xs: '1.125rem', md: '1.25rem' },
+                lineHeight: 1.8,
                 fontFamily: "'Lato', sans-serif",
                 letterSpacing: '0.01em',
+                mb: 2,
               }}
             >
               Our most cherished pieces, handcrafted with ethically sourced emeralds and precious metals.
@@ -286,13 +287,13 @@ const HomePage: React.FC = () => {
           </Box>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
               <CircularProgress size={40} />
             </Box>
           ) : featuredProducts.length > 0 ? (
             <Slider {...sliderSettings}>
               {featuredProducts.map((product) => (
-                <Box key={product.id} px={2}>
+                <Box key={product.id} px={3}>
                   <ProductCard product={product} />
                 </Box>
               ))}
@@ -301,22 +302,31 @@ const HomePage: React.FC = () => {
             // Mostrar fallback para despliegue visual
             <Slider {...sliderSettings}>
               {[1, 2, 3].map((i) => (
-                <Box key={i} px={2}>
+                <Box key={i} px={3}>
                   <Card
                     sx={{
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
                       position: 'relative',
-                      borderRadius: 0,
-                      boxShadow: 'none',
+                      borderRadius: '4px',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
                       border: '1px solid',
                       borderColor: 'divider',
                       backgroundColor: '#FFFFFF',
                       overflow: 'hidden',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-4px)',
+                        boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                      }
                     }}
                   >
-                    <Box sx={{ position: 'relative', paddingTop: '100%', bgcolor: '#f5f5f5' }}>
+                    <Box sx={{ 
+                      position: 'relative', 
+                      paddingTop: '100%', 
+                      bgcolor: '#f7f7f7' 
+                    }}>
                       <Box
                         component="img"
                         src={`/images/products/lote-${i}.jpg`}
@@ -327,19 +337,20 @@ const HomePage: React.FC = () => {
                           left: 0,
                           width: '100%',
                           height: '100%',
-                          objectFit: 'contain',
-                          padding: '10%',
+                          objectFit: 'cover',
+                          padding: '5%',
                         }}
                       />
                     </Box>
-                    <CardContent>
+                    <CardContent sx={{ p: 3 }}>
                       <Typography
                         variant="subtitle1"
                         sx={{
-                          fontFamily: "'Times New Roman', serif",
-                          fontSize: '1.2rem',
-                          fontWeight: 500,
-                          mb: 1,
+                          fontFamily: "'Playfair Display', serif",
+                          fontSize: '1.3rem',
+                          fontWeight: 600,
+                          mb: 1.5,
+                          color: theme.palette.text.primary,
                         }}
                       >
                         Emerald Lot #{i}
@@ -347,10 +358,11 @@ const HomePage: React.FC = () => {
                       <Typography
                         variant="body2"
                         sx={{
-                          color: '#555555',
+                          color: alpha(theme.palette.text.primary, 0.7),
                           fontFamily: "'Lato', sans-serif",
-                          fontSize: '0.85rem',
+                          fontSize: '0.9rem',
                           mb: 2,
+                          lineHeight: 1.5,
                         }}
                       >
                         Premium quality emerald collection
@@ -361,6 +373,7 @@ const HomePage: React.FC = () => {
                           fontFamily: "'Lato', sans-serif",
                           fontWeight: 700,
                           color: theme.palette.primary.main,
+                          letterSpacing: '0.02em',
                         }}
                       >
                         {formatPrice(i * 1000000)}
@@ -375,22 +388,29 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* Categories Section refinada */}
-      <Box sx={{ py: { xs: 8, md: 12 }, backgroundColor: '#fff', mt: { xs: 6, md: 10 } }}>
+      <Box sx={{ 
+        py: { xs: 10, md: 16 }, 
+        backgroundColor: '#fff', 
+        mt: { xs: 8, md: 12 },
+        borderTop: '1px solid',
+        borderColor: alpha(theme.palette.divider, 0.5),
+      }}>
         <Container maxWidth="xl">
           <Typography
             variant="h2"
             sx={{
               fontFamily: "'Playfair Display', serif",
-              fontSize: { xs: '2rem', md: '2.5rem' },
+              fontSize: { xs: '2.25rem', md: '3rem' },
               fontWeight: 700,
               textAlign: 'center',
-              mb: 6,
+              mb: { xs: 6, md: 8 },
               color: theme.palette.text.primary,
+              letterSpacing: '-0.02em',
             }}
           >
             Explore Categories
           </Typography>
-          <Grid container spacing={3}>
+          <Grid container spacing={4}>
             {[
               {
                 name: 'Emerald Rings',
@@ -412,27 +432,29 @@ const HomePage: React.FC = () => {
                   sx={{
                     position: 'relative',
                     display: 'block',
-                    height: { xs: 200, md: 300 },
+                    height: { xs: 240, md: 360 },
                     overflow: 'hidden',
-                    borderRadius: 3,
+                    borderRadius: 2,
                     textDecoration: 'none',
-                    boxShadow: 'none',
+                    boxShadow: '0 6px 30px rgba(0,0,0,0.1)',
                     background: `url(${getCategoryImage(category.name)}) no-repeat center center`,
                     backgroundSize: 'cover',
                     backgroundColor: '#f8f9fa',
+                    transition: 'transform 0.5s ease',
                     '&::after': {
                       content: '""',
                       position: 'absolute',
                       bottom: 0,
                       left: 0,
                       right: 0,
-                      height: '80%',
-                      background: 'linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0) 100%)',
+                      height: '100%',
+                      background: 'linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.2) 70%, rgba(0, 0, 0, 0) 100%)',
                       transition: 'opacity 0.3s ease',
                     },
                     '&:hover': {
+                      transform: 'scale(1.02)',
                       '&::after': {
-                        opacity: 0.85,
+                        opacity: 0.95,
                       },
                     },
                   }}
@@ -441,18 +463,19 @@ const HomePage: React.FC = () => {
                     variant="h3"
                     sx={{
                       position: 'absolute',
-                      bottom: { xs: 16, md: 24 },
-                      left: { xs: 16, md: 24 },
-                      right: { xs: 16, md: 24 },
+                      bottom: { xs: 24, md: 32 },
+                      left: { xs: 24, md: 32 },
+                      right: { xs: 24, md: 32 },
                       color: '#FFFFFF',
                       fontFamily: "'Playfair Display', serif",
-                      fontSize: { xs: '1.5rem', md: '2rem' },
+                      fontSize: { xs: '1.75rem', md: '2.25rem' },
                       fontWeight: 700,
-                      textShadow: '0 4px 16px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,0.5)',
+                      textShadow: '0 4px 16px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
                       zIndex: 1,
                       wordBreak: 'break-word',
                       whiteSpace: 'normal',
                       overflowWrap: 'break-word',
+                      lineHeight: 1.3,
                     }}
                   >
                     {category.name}
