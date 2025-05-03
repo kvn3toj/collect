@@ -232,12 +232,6 @@
       "slug": "lote-11-esmeraldas-11pzs"
     }
   ],
-  "products_categories": [
-    "rings",
-    "necklaces",
-    "bracelets",
-    "earrings"
-  ],
   "categories": [
     {
       "id": "rings",
@@ -264,38 +258,31 @@
       "description": "Elegant earrings to enhance your style"
     }
   ],
-  "jewelry-types": [
-    { "id": "LOTE_GEMAS", "nombre": "Lote de Gemas" }
+  "products_categories": [
+    "rings",
+    "necklaces",
+    "bracelets",
+    "earrings"
   ],
-  "gem-cuts": [
-    { "id": "VARIOS", "nombre": "Varios" },
-    { "id": "BRUTO", "nombre": "En Bruto" }
-  ],
-  "gem-qualities": [
-    { "id": "COMERCIAL_F3", "nombre": "Comercial (F3)" },
-    { "id": "FINAS_F2", "nombre": "Finas (F2)" },
-    { "id": "EXTRAFINAS_F1", "nombre": "Extrafinas (F1)" },
-    { "id": "CANUTILLO_F1_F2", "nombre": "Canutillo (F1 y F2)" },
-    { "id": "CANUTILLO_F2", "nombre": "Canutillo (F2)" }
-  ],
-  "gem-origins": [
-    { "id": "COLOMBIA", "nombre": "Colombia" }
-  ],
-  "auth_login": [
-    {
-      "id": "1",
-      "email": "admin@example.com",
-      "password": "admin123",
-      "response": {
-        "access_token": "mock-jwt-token",
-        "user": {
-          "id": "1",
-          "email": "admin@example.com",
-          "firstName": "Admin",
-          "lastName": "User",
-          "role": "ADMIN"
-        }
-      }
-    }
-  ]
+  "metadata": {
+    "gem_info": {
+      "qualities": [
+        { "id": "COMERCIAL_F3", "nombre": "Comercial (F3)" },
+        { "id": "FINAS_F2", "nombre": "Finas (F2)" },
+        { "id": "EXTRAFINAS_F1", "nombre": "Extrafinas (F1)" },
+        { "id": "CANUTILLO_F1_F2", "nombre": "Canutillo (F1 y F2)" },
+        { "id": "CANUTILLO_F2", "nombre": "Canutillo (F2)" }
+      ],
+      "origins": [
+        { "id": "COLOMBIA", "nombre": "Colombia" }
+      ],
+      "cuts": [
+        { "id": "VARIOS", "nombre": "Varios" },
+        { "id": "BRUTO", "nombre": "En Bruto" }
+      ]
+    },
+    "jewelry_types": [
+      { "id": "LOTE_GEMAS", "nombre": "Lote de Gemas" }
+    ]
+  }
 }
