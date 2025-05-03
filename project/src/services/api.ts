@@ -11,12 +11,13 @@ import useAuthStore from '../stores/authStore';
  * Configuración base para la API
  */
 // Obtener la URL base de la API desde las variables de entorno
+// Usar explícitamente la variable de entorno para asegurar que esté disponible en producción
 const API_BASE_URL = import.meta.env.VITE_API_URL;
-const IS_PRODUCTION = import.meta.env.PROD;
 
 const API_CONFIG: AxiosRequestConfig = {
-  // Usar URL completa en producción, proxy en desarrollo
-  baseURL: IS_PRODUCTION ? API_BASE_URL : '/api',
+  // Siempre usar la URL completa si está disponible (en producción)
+  // Solo usar '/api' como fallback (en desarrollo local)
+  baseURL: API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
