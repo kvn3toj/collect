@@ -24,18 +24,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import { ArrowLeft, ArrowRight, CreditCard, Truck, Check } from 'lucide-react';
-
-// Simulamos datos para el checkout
-const mockCartSummary = {
-  items: [
-    { id: '1', name: 'Basic T-Shirt', quantity: 2, price: 29.99 },
-    { id: '2', name: 'Designer Jeans', quantity: 1, price: 89.99 }
-  ],
-  subtotal: 149.97,
-  tax: 15.00,
-  shipping: 0,
-  total: 164.97
-};
+import useCartStore from '../stores/cartStore';
 
 // Pasos del checkout
 const steps = ['Shipping', 'Payment', 'Review'];
@@ -69,6 +58,23 @@ const CheckoutPage = () => {
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { items: cartItems, clearCart } = useCartStore();
+  // Calcular subtotal
+  const subtotal = cartItems.reduce(
+    (total, item) =>
+      total +
+      (typeof item.totalPrice === 'number'
+        ? item.totalPrice
+        : ((item.product?.precio ?? item.product?.price ?? 0) * (item.quantity ?? 1))),
+    0
+  );
+  // Calcular impuestos (10%)
+  const tax = subtotal * 0.1;
+  // Calcular envío
+  const shipping = subtotal > 100 ? 0 : 9.99;
+  // Calcular total
+  const total = subtotal + tax + shipping;
 
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value } = e.target;
@@ -174,6 +180,7 @@ const CheckoutPage = () => {
     setTimeout(() => {
       setLoading(false);
       setOrderComplete(true);
+      clearCart();
     }, 2000);
   };
   
@@ -404,41 +411,33 @@ const CheckoutPage = () => {
         <Typography variant="h6" gutterBottom>
           Order Summary
         </Typography>
-        {mockCartSummary.items.map(item => (
-          <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+        {cartItems.map(item => (
+          <Box key={item.productId} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography variant="body2">
-              {item.name} × {item.quantity}
+              {(item.product?.nombre || item.product?.name || 'Producto')} × {item.quantity}
             </Typography>
             <Typography variant="body2">
-              ${(item.price * item.quantity).toFixed(2)}
+              ${(item.totalPrice ?? (item.product?.precio ?? item.product?.price ?? 0) * item.quantity).toFixed(2)}
             </Typography>
           </Box>
         ))}
-        
         <Divider sx={{ my: 2 }} />
-        
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
           <Typography variant="body2">Subtotal</Typography>
-          <Typography variant="body2">${mockCartSummary.subtotal.toFixed(2)}</Typography>
+          <Typography variant="body2">${subtotal.toFixed(2)}</Typography>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
           <Typography variant="body2">Tax</Typography>
-          <Typography variant="body2">${mockCartSummary.tax.toFixed(2)}</Typography>
+          <Typography variant="body2">${tax.toFixed(2)}</Typography>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
           <Typography variant="body2">Shipping</Typography>
-          <Typography variant="body2">
-            {mockCartSummary.shipping === 0 ? 'Free' : `$${mockCartSummary.shipping.toFixed(2)}`}
-          </Typography>
+          <Typography variant="body2">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</Typography>
         </Box>
-        
         <Divider sx={{ my: 2 }} />
-        
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
           <Typography variant="subtitle1" fontWeight="bold">Total</Typography>
-          <Typography variant="subtitle1" fontWeight="bold">
-            ${mockCartSummary.total.toFixed(2)}
-          </Typography>
+          <Typography variant="subtitle1" fontWeight="bold">${total.toFixed(2)}</Typography>
         </Box>
       </Grid>
       
@@ -609,42 +608,33 @@ const CheckoutPage = () => {
                 <Typography variant="h6" gutterBottom>
                   Order Summary
                 </Typography>
-                
-                {mockCartSummary.items.map(item => (
-                  <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                {cartItems.map(item => (
+                  <Box key={item.productId} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="body2">
-                      {item.name} × {item.quantity}
+                      {(item.product?.nombre || item.product?.name || 'Producto')} × {item.quantity}
                     </Typography>
                     <Typography variant="body2">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ${(item.totalPrice ?? (item.product?.precio ?? item.product?.price ?? 0) * item.quantity).toFixed(2)}
                     </Typography>
                   </Box>
                 ))}
-                
                 <Divider sx={{ my: 2 }} />
-                
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2">Subtotal</Typography>
-                  <Typography variant="body2">${mockCartSummary.subtotal.toFixed(2)}</Typography>
+                  <Typography variant="body2">${subtotal.toFixed(2)}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2">Tax</Typography>
-                  <Typography variant="body2">${mockCartSummary.tax.toFixed(2)}</Typography>
+                  <Typography variant="body2">${tax.toFixed(2)}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="body2">Shipping</Typography>
-                  <Typography variant="body2">
-                    {mockCartSummary.shipping === 0 ? 'Free' : `$${mockCartSummary.shipping.toFixed(2)}`}
-                  </Typography>
+                  <Typography variant="body2">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</Typography>
                 </Box>
-                
                 <Divider sx={{ my: 2 }} />
-                
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold">Total</Typography>
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    ${mockCartSummary.total.toFixed(2)}
-                  </Typography>
+                  <Typography variant="subtitle1" fontWeight="bold">${total.toFixed(2)}</Typography>
                 </Box>
               </Paper>
             </Grid>

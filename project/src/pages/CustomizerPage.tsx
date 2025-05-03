@@ -19,7 +19,13 @@ import { ArrowLeft, Save, ShoppingCart } from 'lucide-react';
 
 // Simulamos la función de servicio para obtener un producto personalizable
 const getCustomizableProduct = async (id: string) => {
-  // En una aplicación real, esto sería una llamada API
+  // Para despliegue visual estático, simularemos un retraso y luego un error
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  // En versión de despliegue, forzamos un "error" de carga para mostrar mensaje
+  return Promise.reject(new Error("Personalizador no disponible temporalmente"));
+  
+  /* DATOS SIMULADOS - COMENTADOS PARA DESPLIEGUE VISUAL ESTÁTICO
   return {
     id,
     name: 'Customizable Product ' + id,
@@ -37,6 +43,7 @@ const getCustomizableProduct = async (id: string) => {
       }
     }
   };
+  */
 };
 
 const CustomizerPage = () => {
@@ -50,18 +57,26 @@ const CustomizerPage = () => {
     size: 10
   });
 
-  const { data: product, isLoading, isError } = useQuery({
+  const { data: product, isLoading, isError, error } = useQuery({
     queryKey: ['customizable-product', id],
     queryFn: () => getCustomizableProduct(id || ''),
     enabled: !!id,
     onSuccess: (data) => {
       // Initialize with default values
-      setCustomizations({
-        ...customizations,
-        color: data.customizationOptions.colors[0],
-        material: data.customizationOptions.materials[0],
-      });
-    }
+      if (data && data.customizationOptions) {
+        setCustomizations({
+          ...customizations,
+          color: data.customizationOptions.colors?.[0] || '',
+          material: data.customizationOptions.materials?.[0] || '',
+        });
+      }
+    },
+    // Desactivar refetch para evitar llamadas infinitas en el entorno de despliegue
+    retry: false,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false
   });
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -110,9 +125,14 @@ const CustomizerPage = () => {
   if (isError || !product) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">Error loading product customizer. Please try again later.</Alert>
+        <Alert severity="info" sx={{ mb: 3 }}>
+          El personalizador de productos está temporalmente no disponible. Estamos trabajando para habilitarlo pronto.
+        </Alert>
+        <Typography variant="body1" sx={{ mb: 3 }}>
+          Por favor, visite nuestra colección de productos estándar o contáctenos para solicitudes personalizadas.
+        </Typography>
         <Button startIcon={<ArrowLeft />} onClick={() => navigate('/products')} sx={{ mt: 2 }}>
-          Back to Products
+          Ver Productos
         </Button>
       </Container>
     );

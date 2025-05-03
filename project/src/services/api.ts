@@ -1,17 +1,29 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { 
+  AxiosInstance, 
+  AxiosRequestConfig, 
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+  AxiosError 
+} from 'axios';
 import useAuthStore from '../stores/authStore';
 
-// Create a base API instance
-const api: AxiosInstance = axios.create({
+/**
+ * Configuración base para la API
+ */
+const API_CONFIG: AxiosRequestConfig = {
   baseURL: 'http://localhost:3001',
   headers: {
     'Content-Type': 'application/json',
   },
-});
+  timeout: 30000, // 30 segundos
+};
 
-// Request interceptor for adding auth token
+// Crear una instancia base de la API
+const api: AxiosInstance = axios.create(API_CONFIG);
+
+// Interceptor de solicitudes para agregar token de autenticación
 api.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = useAuthStore.getState().token;
     
     if (token && config.headers) {
@@ -20,28 +32,27 @@ api.interceptors.request.use(
     
     return config;
   },
-  (error) => {
+  (error: AxiosError): Promise<AxiosError> => {
     return Promise.reject(error);
   }
 );
 
-// Response interceptor for handling common errors
+// Interceptor de respuestas para manejar errores comunes
 api.interceptors.response.use(
-  (response: AxiosResponse) => {
+  (response: AxiosResponse): AxiosResponse => {
     return response;
   },
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError): Promise<never> => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     
-    // Handle 401 Unauthorized errors (token expired)
+    // Manejar errores 401 No autorizado (token expirado)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
-      // Log the user out as token has expired
+      // Cerrar sesión del usuario porque el token ha expirado
       useAuthStore.getState().logout();
       
-      // Redirect to login page can be handled in the UI components
-      return Promise.reject(error);
+      // La redirección a la página de inicio de sesión se puede manejar en los componentes de UI
     }
     
     return Promise.reject(error);

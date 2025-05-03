@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, SxProps } from '@mui/material';
+import { useState, CSSProperties } from 'react';
+import { Box } from '@mui/material';
 
 interface ProductImageProps {
   src: string | null;
@@ -7,25 +7,29 @@ interface ProductImageProps {
   width?: number | string;
   height?: number | string;
   fallback?: string;
-  style?: SxProps;
+  style?: CSSProperties;
 }
 
-const ProductImage: React.FC<ProductImageProps> = ({
+const ProductImage = ({
   src,
   alt,
   width = '100%',
   height = 'auto',
   fallback = '/images/placeholder-product.jpg',
   style = {},
-}) => {
-  const [imageError, setImageError] = useState(!src || src === '');
+}: ProductImageProps): JSX.Element => {
+  const [imageError, setImageError] = useState<boolean>(!src || src === '');
+
+  const handleImageError = (): void => {
+    setImageError(true);
+  };
 
   return (
     <Box
       component="img"
-      src={imageError ? fallback : src}
+      src={imageError ? fallback : src || fallback}
       alt={alt}
-      onError={() => setImageError(true)}
+      onError={handleImageError}
       sx={{
         width,
         height,

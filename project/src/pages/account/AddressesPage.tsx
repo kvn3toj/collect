@@ -5,11 +5,11 @@ import { useForm } from 'react-hook-form';
 import { Address } from '../../types/user.types';
 
 // Mock addresses - in a real app, this would come from an API
-const mockAddresses = [
+const mockAddresses: Address[] = [
   {
     id: 'addr-001',
     userId: 'user-001',
-    type: 'shipping',
+    type: 'shipping' as const,
     firstName: 'John',
     lastName: 'Doe',
     addressLine1: '123 Main St',
@@ -24,7 +24,7 @@ const mockAddresses = [
   {
     id: 'addr-002',
     userId: 'user-001',
-    type: 'billing',
+    type: 'billing' as const,
     firstName: 'John',
     lastName: 'Doe',
     addressLine1: '456 Park Ave',
@@ -112,7 +112,7 @@ const AddressesPage = () => {
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [dialogTitle, setDialogTitle] = useState('');
   
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<AddressFormData>();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<AddressFormData>();
   
   const handleAddAddress = (type: 'shipping' | 'billing') => {
     setDialogTitle(`Add ${type === 'shipping' ? 'Shipping' : 'Billing'} Address`);

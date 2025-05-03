@@ -1,11 +1,10 @@
-import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import luxuryTheme from './theme/theme';
 import AppRoutes from './routes/AppRoutes';
-import { useEffect } from 'react';
 import useAuthStore from './stores/authStore';
 
 // Create a client
@@ -19,7 +18,7 @@ const queryClient = new QueryClient({
   },
 });
 
-function App() {
+const App = (): JSX.Element => {
   const { checkAuth } = useAuthStore();
 
   useEffect(() => {
@@ -37,6 +36,6 @@ function App() {
       </ThemeProvider>
     </QueryClientProvider>
   );
-}
+};
 
 export default App;

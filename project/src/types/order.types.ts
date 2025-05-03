@@ -1,3 +1,6 @@
+/**
+ * Pedido completo
+ */
 export interface Order {
   id: string;
   userId: string;
@@ -19,6 +22,9 @@ export interface Order {
   updatedAt: string;
 }
 
+/**
+ * Ítem individual dentro de un pedido
+ */
 export interface OrderItem {
   productId: string;
   productName: string;
@@ -30,28 +36,40 @@ export interface OrderItem {
   customizations?: Record<string, string>;
 }
 
+/**
+ * Tipos de estado de un pedido
+ */
 export type OrderStatus = 
-  | 'pending' 
-  | 'processing' 
-  | 'shipped' 
-  | 'delivered' 
-  | 'cancelled' 
-  | 'refunded';
+  | 'pending'      // Pendiente
+  | 'processing'   // En procesamiento
+  | 'shipped'      // Enviado
+  | 'delivered'    // Entregado
+  | 'cancelled'    // Cancelado
+  | 'refunded';    // Reembolsado
 
+/**
+ * Estados de pago
+ */
 export type PaymentStatus = 
-  | 'pending' 
-  | 'paid' 
-  | 'failed' 
-  | 'refunded' 
-  | 'partially_refunded';
+  | 'pending'              // Pendiente
+  | 'paid'                 // Pagado
+  | 'failed'               // Fallido
+  | 'refunded'             // Reembolsado
+  | 'partially_refunded';  // Parcialmente reembolsado
 
+/**
+ * Métodos de pago disponibles
+ */
 export type PaymentMethod = 
-  | 'credit_card' 
-  | 'paypal' 
-  | 'bank_transfer' 
-  | 'crypto';
+  | 'credit_card'    // Tarjeta de crédito
+  | 'paypal'         // PayPal
+  | 'bank_transfer'  // Transferencia bancaria
+  | 'crypto';        // Criptomonedas
 
-export interface ShippingAddress {
+/**
+ * Base para direcciones (tanto envío como facturación)
+ */
+export interface BaseAddress {
   firstName: string;
   lastName: string;
   addressLine1: string;
@@ -63,18 +81,19 @@ export interface ShippingAddress {
   phoneNumber: string;
 }
 
-export interface BillingAddress {
-  firstName: string;
-  lastName: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-  phoneNumber: string;
-}
+/**
+ * Dirección de envío
+ */
+export interface ShippingAddress extends BaseAddress {}
 
+/**
+ * Dirección de facturación
+ */
+export interface BillingAddress extends BaseAddress {}
+
+/**
+ * Resumen de un pedido (para listados)
+ */
 export interface OrderSummary {
   id: string;
   orderNumber: string;
@@ -82,4 +101,32 @@ export interface OrderSummary {
   status: OrderStatus;
   total: number;
   itemCount: number;
+}
+
+/**
+ * Datos para la creación de un nuevo pedido
+ */
+export interface CreateOrderData {
+  items: Array<{
+    productId: string;
+    quantity: number;
+    customizations?: Record<string, string>;
+  }>;
+  shippingAddressId?: string;
+  billingAddressId?: string;
+  shippingAddress?: Omit<ShippingAddress, 'id'>;
+  billingAddress?: Omit<BillingAddress, 'id'>;
+  paymentMethod: PaymentMethod;
+  notes?: string;
+}
+
+/**
+ * Detalles del envío
+ */
+export interface ShippingDetails {
+  carrier: string;
+  trackingNumber: string;
+  estimatedDelivery?: string;
+  shippedAt: string;
+  trackingUrl?: string;
 }

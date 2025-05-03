@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Card,
   CardContent,
   Typography,
-  Button,
   Box,
   Rating,
   Skeleton,
@@ -21,14 +20,25 @@ interface ProductCardProps {
   product: Product;
 }
 
-const ProductCard: React.FC<ProductCardProps> & { Skeleton: React.FC } = ({ product }) => {
+const ProductCard = ({ product }: ProductCardProps): JSX.Element => {
   const theme = useTheme();
-  const [isHovered, setIsHovered] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
   const { addItem } = useCartStore();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (): void => {
     addItem(product, 1);
+  };
+
+  // Formatear precio con Intl.NumberFormat
+  const formatPrice = (price: number | null | undefined): string => {
+    if (price == null) return "";
+    
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
   };
 
   return (
@@ -63,7 +73,7 @@ const ProductCard: React.FC<ProductCardProps> & { Skeleton: React.FC } = ({ prod
       >
         <ProductImage
           src={product.imagenesPrincipales?.[0] || product.images?.[0]}
-          alt={product.nombre || product.name}
+          alt={product.nombre || product.name || ''}
           style={{
             position: 'absolute',
             top: 0,
@@ -236,14 +246,9 @@ const ProductCard: React.FC<ProductCardProps> & { Skeleton: React.FC } = ({ prod
                 color: theme.palette.primary.main,
               }}
             >
-              {new Intl.NumberFormat('es-CO', {
-                style: 'currency',
-                currency: 'COP',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              }).format(product.precio || product.price || 0)}
+              {formatPrice(product.precio || product.price || 0)}
             </Typography>
-            {(product.discountPrice || product.precio) && (
+            {product.discountPrice && (
               <Typography
                 variant="body2"
                 sx={{
@@ -253,12 +258,7 @@ const ProductCard: React.FC<ProductCardProps> & { Skeleton: React.FC } = ({ prod
                   fontSize: '0.9rem',
                 }}
               >
-                {new Intl.NumberFormat('es-CO', {
-                  style: 'currency',
-                  currency: 'COP',
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                }).format(product.discountPrice || 0)}
+                {formatPrice(product.discountPrice)}
               </Typography>
             )}
           </Box>
@@ -268,8 +268,8 @@ const ProductCard: React.FC<ProductCardProps> & { Skeleton: React.FC } = ({ prod
   );
 };
 
-// Skeleton loader component
-ProductCard.Skeleton = function ProductCardSkeleton() {
+// Función de componente para el skeleton loader
+const ProductCardSkeleton = (): JSX.Element => {
   return (
     <Card
       sx={{
@@ -307,4 +307,8 @@ ProductCard.Skeleton = function ProductCardSkeleton() {
   );
 };
 
-export default ProductCard;
+// Asignar el componente Skeleton a ProductCard
+ProductCard.Skeleton = ProductCardSkeleton;
+
+// Especificar tipado explícito para el export
+export default ProductCard as React.FC<ProductCardProps> & { Skeleton: React.FC };

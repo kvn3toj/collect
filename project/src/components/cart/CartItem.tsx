@@ -15,9 +15,11 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   // Extract values with fallbacks for safety
   const productId = item?.productId || '';
   const quantity = item?.quantity || 1;
-  const productName = item?.product?.name || 'Product Unavailable';
-  const productImages = item?.product?.images || [];
-  const imageUrl = productImages.length > 0 ? productImages[0] : '/images/placeholder-product.jpg';
+  const productName = item?.product?.nombre || item?.product?.name || 'Producto';
+  const imageUrl =
+    (item?.product?.imagenesPrincipales && item.product.imagenesPrincipales[0]) ||
+    (item?.product?.images && item.product.images[0]) ||
+    '/images/placeholder-product.jpg';
   const customizations = item?.customizations || {};
   const hasCustomizations = Object.values(customizations).length > 0;
   const customizationText = hasCustomizations 
@@ -25,7 +27,8 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
     : 'Standard';
   
   // Calculate total price safely
-  const totalPrice = item?.totalPrice ?? (item?.product?.price || 0) * quantity;
+  const productPrice = item?.product?.precio ?? item?.product?.price ?? 0;
+  const totalPrice = item?.totalPrice ?? (productPrice * quantity);
 
   const handleQuantityChange = (event: SelectChangeEvent<number>) => {
     if (productId) {

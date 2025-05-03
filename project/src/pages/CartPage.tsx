@@ -13,38 +13,17 @@ import {
   Alert
 } from '@mui/material';
 import { ShoppingBag, Trash2, Minus, Plus, ArrowRight, ShoppingCart } from 'lucide-react';
-
-// Simulamos datos para el carrito
-const mockCartItems = [
-  {
-    id: '1',
-    name: 'Basic T-Shirt',
-    price: 29.99,
-    image: '/placeholder.jpg',
-    quantity: 2,
-    color: 'Black',
-    size: 'M'
-  },
-  {
-    id: '2',
-    name: 'Designer Jeans',
-    price: 89.99,
-    image: '/placeholder.jpg',
-    quantity: 1,
-    color: 'Blue',
-    size: '32'
-  }
-];
+import useCartStore from '../stores/cartStore';
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState(mockCartItems);
+  const { items: cartItems, removeItem, updateQuantity } = useCartStore();
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
   const [promoDiscount, setPromoDiscount] = useState(0);
 
   // Calcular subtotal
-  const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce((total, item) => total + (item.totalPrice ?? (item.product?.price * item.quantity)), 0);
   
   // Calcular impuestos (10%)
   const tax = subtotal * 0.1;
@@ -55,16 +34,13 @@ const CartPage = () => {
   // Calcular total
   const total = subtotal + tax + shipping - promoDiscount;
 
-  const handleRemoveItem = (id: string) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+  const handleRemoveItem = (productId: string) => {
+    removeItem(productId);
   };
 
-  const handleQuantityChange = (id: string, newQuantity: number) => {
+  const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
-    
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
+    updateQuantity(productId, newQuantity);
   };
 
   const handleApplyPromo = () => {
@@ -124,14 +100,14 @@ const CartPage = () => {
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, mb: { xs: 3, md: 0 } }}>
             {cartItems.map(item => (
-              <Box key={item.id}>
+              <Box key={item.productId}>
                 <Grid container spacing={2} alignItems="center">
                   {/* Product Image */}
                   <Grid item xs={3} sm={2}>
                     <Box
                       component="img"
-                      src={item.image}
-                      alt={item.name}
+                      src={item.product?.imagenesPrincipales?.[0] || item.product?.images?.[0] || '/images/placeholder-product.jpg'}
+                      alt={item.product?.nombre || item.product?.name || 'Producto'}
                       sx={{ width: '100%', height: 'auto', borderRadius: 1 }}
                     />
                   </Grid>
@@ -139,13 +115,13 @@ const CartPage = () => {
                   {/* Product Info */}
                   <Grid item xs={9} sm={5}>
                     <Typography variant="subtitle1" fontWeight="bold">
-                      {item.name}
+                      {item.product?.nombre || item.product?.name || 'Producto'}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Color: {item.color} | Size: {item.size}
+                      {item.customizations ? Object.values(item.customizations).join(', ') : 'Standard'}
                     </Typography>
                     <Typography variant="body2" color="primary" fontWeight="medium" sx={{ mt: 1 }}>
-                      ${item.price.toFixed(2)}
+                      ${item.product?.precio ?? item.product?.price ?? 0}
                     </Typography>
                   </Grid>
                   
@@ -154,7 +130,7 @@ const CartPage = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <IconButton 
                         size="small"
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                        onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}
                       >
                         <Minus size={16} />
                       </IconButton>
@@ -163,7 +139,7 @@ const CartPage = () => {
                         onChange={(e) => {
                           const value = parseInt(e.target.value);
                           if (!isNaN(value)) {
-                            handleQuantityChange(item.id, value);
+                            handleQuantityChange(item.productId, value);
                           }
                         }}
                         inputProps={{ 
@@ -176,7 +152,7 @@ const CartPage = () => {
                       />
                       <IconButton 
                         size="small"
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}
                       >
                         <Plus size={16} />
                       </IconButton>
@@ -186,12 +162,12 @@ const CartPage = () => {
                   {/* Subtotal & Remove */}
                   <Grid item xs={5} sm={2} sx={{ textAlign: 'right' }}>
                     <Typography variant="subtitle2">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ${(item.totalPrice ?? (item.product?.precio ?? item.product?.price ?? 0) * item.quantity).toFixed(2)}
                     </Typography>
                     <IconButton 
                       size="small" 
                       color="error" 
-                      onClick={() => handleRemoveItem(item.id)}
+                      onClick={() => handleRemoveItem(item.productId)}
                       sx={{ mt: 1 }}
                     >
                       <Trash2 size={16} />

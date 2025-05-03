@@ -77,6 +77,11 @@ const Header: React.FC = () => {
     setSearchOpen(!searchOpen);
   };
 
+  // Colors with WCAG AA compliance
+  const textColor = isScrolled ? '#212121' : '#FFFFFF';
+  const hoverColor = isScrolled ? theme.palette.warning.main : '#E1C16E';
+  const iconBgHover = isScrolled ? alpha(theme.palette.primary.main, 0.08) : 'rgba(255,255,255,0.12)';
+
   return (
     <AppBar 
       position="fixed" 
@@ -119,10 +124,11 @@ const Header: React.FC = () => {
               onClick={handleMobileMenuToggle}
               sx={{ 
                 mr: 1, 
-                color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
+                color: textColor,
                 transition: 'color 0.3s ease',
                 '&:hover': {
-                  backgroundColor: alpha(isScrolled ? theme.palette.primary.main : theme.palette.common.white, 0.1),
+                  backgroundColor: iconBgHover,
+                  color: hoverColor,
                 }
               }}
             >
@@ -168,78 +174,27 @@ const Header: React.FC = () => {
                 alignItems: 'center'
               }}
             >
-              <Button
-                component={RouterLink}
-                to="/products"
-                sx={{
-                  color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  letterSpacing: '0.02em',
-                  transition: 'color 0.3s ease',
-                  '&:hover': {
-                    color: isScrolled ? theme.palette.primary.main : alpha(theme.palette.common.white, 0.9),
-                    backgroundColor: 'transparent',
-                  }
-                }}
-              >
-                Collections
-              </Button>
-              <Button
-                component={RouterLink}
-                to="/products?category=emeralds"
-                sx={{
-                  color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  letterSpacing: '0.02em',
-                  transition: 'color 0.3s ease',
-                  '&:hover': {
-                    color: isScrolled ? theme.palette.primary.main : alpha(theme.palette.common.white, 0.9),
-                    backgroundColor: 'transparent',
-                  }
-                }}
-              >
-                Emeralds
-              </Button>
-              <Button
-                component={RouterLink}
-                to="/products?category=jewelry"
-                sx={{
-                  color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  letterSpacing: '0.02em',
-                  transition: 'color 0.3s ease',
-                  '&:hover': {
-                    color: isScrolled ? theme.palette.primary.main : alpha(theme.palette.common.white, 0.9),
-                    backgroundColor: 'transparent',
-                  }
-                }}
-              >
-                Jewelry
-              </Button>
-              <Button
-                component={RouterLink}
-                to="/customize"
-                sx={{
-                  color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  letterSpacing: '0.02em',
-                  transition: 'color 0.3s ease',
-                  '&:hover': {
-                    color: isScrolled ? theme.palette.primary.main : alpha(theme.palette.common.white, 0.9),
-                    backgroundColor: 'transparent',
-                  }
-                }}
-              >
-                Custom Design
-              </Button>
+              {['Collections', 'Emeralds', 'Jewelry', 'Custom Design'].map((item) => (
+                <Button
+                  key={item}
+                  component={RouterLink}
+                  to={item === 'Collections' ? '/products' : `/products?category=${item.toLowerCase()}`}
+                  sx={{
+                    color: textColor,
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.95rem',
+                    fontWeight: 500,
+                    letterSpacing: '0.02em',
+                    transition: 'color 0.3s ease',
+                    '&:hover': {
+                      color: hoverColor,
+                      backgroundColor: 'transparent',
+                    }
+                  }}
+                >
+                  {item}
+                </Button>
+              ))}
             </Box>
           )}
 
@@ -256,10 +211,11 @@ const Header: React.FC = () => {
             <IconButton
               onClick={handleSearchToggle}
               sx={{
-                color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
+                color: textColor,
                 transition: 'color 0.3s ease',
                 '&:hover': {
-                  backgroundColor: alpha(isScrolled ? theme.palette.primary.main : theme.palette.common.white, 0.1),
+                  color: hoverColor,
+                  backgroundColor: iconBgHover,
                 }
               }}
             >
@@ -269,10 +225,11 @@ const Header: React.FC = () => {
             <IconButton
               onClick={openCart}
               sx={{
-                color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
+                color: textColor,
                 transition: 'color 0.3s ease',
                 '&:hover': {
-                  backgroundColor: alpha(isScrolled ? theme.palette.primary.main : theme.palette.common.white, 0.1),
+                  color: hoverColor,
+                  backgroundColor: iconBgHover,
                 }
               }}
             >
@@ -299,10 +256,11 @@ const Header: React.FC = () => {
                 <IconButton
                   onClick={handleUserMenuOpen}
                   sx={{
-                    color: isScrolled ? theme.palette.text.primary : theme.palette.common.white,
+                    color: textColor,
                     transition: 'color 0.3s ease',
                     '&:hover': {
-                      backgroundColor: alpha(isScrolled ? theme.palette.primary.main : theme.palette.common.white, 0.1),
+                      backgroundColor: iconBgHover,
+                      color: hoverColor,
                     }
                   }}
                 >
@@ -312,7 +270,7 @@ const Header: React.FC = () => {
                     sx={{ 
                       width: 28, 
                       height: 28,
-                      border: `2px solid ${isScrolled ? theme.palette.primary.main : theme.palette.common.white}`,
+                      border: `2px solid ${isScrolled ? theme.palette.primary.main : '#FFFFFF'}`,
                       transition: 'border-color 0.3s ease',
                     }}
                   />
@@ -339,6 +297,7 @@ const Header: React.FC = () => {
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '0.9rem',
                       py: 1.5,
+                      color: '#212121',
                       '&:hover': {
                         backgroundColor: alpha(theme.palette.primary.main, 0.08),
                       }
@@ -354,6 +313,7 @@ const Header: React.FC = () => {
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '0.9rem',
                       py: 1.5,
+                      color: '#212121',
                       '&:hover': {
                         backgroundColor: alpha(theme.palette.primary.main, 0.08),
                       }
@@ -369,6 +329,7 @@ const Header: React.FC = () => {
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '0.9rem',
                       py: 1.5,
+                      color: '#212121',
                       '&:hover': {
                         backgroundColor: alpha(theme.palette.primary.main, 0.08),
                       }
@@ -486,90 +447,31 @@ const Header: React.FC = () => {
         </Box>
         <Divider />
         <List>
-          <ListItem 
-            button 
-            component={RouterLink} 
-            to="/products"
-            onClick={handleMobileMenuToggle}
-            sx={{
-              py: 1.5,
-              '&:hover': {
-                backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              }
-            }}
-          >
-            <ListItemText 
-              primary="Collections" 
-              primaryTypographyProps={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.95rem',
-                fontWeight: 500,
+          {['Collections', 'Emeralds', 'Jewelry', 'Custom Design'].map((item) => (
+            <ListItem 
+              key={item}
+              button 
+              component={RouterLink} 
+              to={item === 'Collections' ? '/products' : `/products?category=${item.toLowerCase()}`}
+              onClick={handleMobileMenuToggle}
+              sx={{
+                py: 1.5,
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                }
               }}
-            />
-          </ListItem>
-          <ListItem 
-            button 
-            component={RouterLink} 
-            to="/products?category=emeralds"
-            onClick={handleMobileMenuToggle}
-            sx={{
-              py: 1.5,
-              '&:hover': {
-                backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              }
-            }}
-          >
-            <ListItemText 
-              primary="Emeralds" 
-              primaryTypographyProps={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.95rem',
-                fontWeight: 500,
-              }}
-            />
-          </ListItem>
-          <ListItem 
-            button 
-            component={RouterLink} 
-            to="/products?category=jewelry"
-            onClick={handleMobileMenuToggle}
-            sx={{
-              py: 1.5,
-              '&:hover': {
-                backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              }
-            }}
-          >
-            <ListItemText 
-              primary="Jewelry" 
-              primaryTypographyProps={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.95rem',
-                fontWeight: 500,
-              }}
-            />
-          </ListItem>
-          <ListItem 
-            button 
-            component={RouterLink} 
-            to="/customize"
-            onClick={handleMobileMenuToggle}
-            sx={{
-              py: 1.5,
-              '&:hover': {
-                backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              }
-            }}
-          >
-            <ListItemText 
-              primary="Custom Design" 
-              primaryTypographyProps={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.95rem',
-                fontWeight: 500,
-              }}
-            />
-          </ListItem>
+            >
+              <ListItemText 
+                primary={item} 
+                primaryTypographyProps={{
+                  fontFamily: "'Lato', sans-serif",
+                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  color: '#212121',
+                }}
+              />
+            </ListItem>
+          ))}
         </List>
         <Divider />
         <Box sx={{ p: 2 }}>
