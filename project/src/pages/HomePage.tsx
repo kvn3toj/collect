@@ -251,6 +251,121 @@ const HomePage: React.FC = () => {
         </Container>
       </Box>
 
+      {/* Categories Section refinada */}
+      <Box sx={{ 
+        py: { xs: 10, md: 16 }, 
+        backgroundColor: '#fff', 
+        mt: { xs: 8, md: 12 },
+        borderTop: '1px solid',
+        borderColor: alpha(theme.palette.divider, 0.5),
+      }}>
+        <Container maxWidth="xl">
+          <Typography
+            variant="h2"
+            sx={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: { xs: '2.25rem', md: '3rem' },
+              fontWeight: 700,
+              textAlign: 'center',
+              mb: { xs: 6, md: 8 },
+              color: theme.palette.text.primary,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Explore Categories
+          </Typography>
+          <Grid container spacing={4}>
+            {[
+              {
+                name: 'Emerald Rings',
+                link: '/products?category=rings',
+                isVideo: true,
+              },
+              {
+                name: 'Emerald Necklaces',
+                link: '/products?category=necklaces',
+              },
+              {
+                name: 'Emerald Earrings',
+                link: '/products?category=earrings',
+              },
+            ].map((category, idx) => (
+              <Grid item xs={12} sm={6} md={4} key={idx}>
+                <Box
+                  component={RouterLink}
+                  to={category.link || `/products?category=placeholder`}
+                  sx={{
+                    position: 'relative',
+                    display: 'block',
+                    height: { xs: 240, md: 360 },
+                    overflow: 'hidden',
+                    borderRadius: 2,
+                    textDecoration: 'none',
+                    boxShadow: '0 6px 30px rgba(0,0,0,0.1)',
+                    backgroundColor: '#f8f9fa',
+                    transition: 'transform 0.5s ease',
+                    '&:hover': {
+                      transform: 'scale(1.02)',
+                    },
+                  }}
+                >
+                  {category.isVideo ? (
+                    <Box
+                      component="video"
+                      autoPlay
+                      muted
+                      loop
+                      sx={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    >
+                      <source src="/0503.mp4" type="video/mp4" />
+                      Tu navegador no soporta videos HTML5.
+                    </Box>
+                  ) : (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: `url(${getCategoryImage(category.name)}) no-repeat center center`,
+                        backgroundSize: 'cover',
+                      }}
+                    />
+                  )}
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      position: 'absolute',
+                      bottom: { xs: 24, md: 32 },
+                      left: { xs: 24, md: 32 },
+                      right: { xs: 24, md: 32 },
+                      color: '#FFFFFF',
+                      fontFamily: "'Playfair Display', serif",
+                      fontSize: { xs: '1.75rem', md: '2.25rem' },
+                      fontWeight: 700,
+                      textShadow: '0 4px 16px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
+                      zIndex: 1,
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
+                      overflowWrap: 'break-word',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {category.name}
+                  </Typography>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+
       {/* Featured Products Section (Carrusel con lotes específicos) */}
       <Box sx={{ mt: { xs: 10, md: 16 } }}>
         <Container maxWidth="lg" sx={{ mb: { xs: 10, md: 16 } }}>
@@ -384,106 +499,6 @@ const HomePage: React.FC = () => {
               ))}
             </Slider>
           )}
-        </Container>
-      </Box>
-
-      {/* Categories Section refinada */}
-      <Box sx={{ 
-        py: { xs: 10, md: 16 }, 
-        backgroundColor: '#fff', 
-        mt: { xs: 8, md: 12 },
-        borderTop: '1px solid',
-        borderColor: alpha(theme.palette.divider, 0.5),
-      }}>
-        <Container maxWidth="xl">
-          <Typography
-            variant="h2"
-            sx={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: { xs: '2.25rem', md: '3rem' },
-              fontWeight: 700,
-              textAlign: 'center',
-              mb: { xs: 6, md: 8 },
-              color: theme.palette.text.primary,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Explore Categories
-          </Typography>
-          <Grid container spacing={4}>
-            {[
-              {
-                name: 'Emerald Rings',
-                link: '/products?category=rings',
-              },
-              {
-                name: 'Emerald Necklaces',
-                link: '/products?category=necklaces',
-              },
-              {
-                name: 'Emerald Earrings',
-                link: '/products?category=earrings',
-              },
-            ].map((category, idx) => (
-              <Grid item xs={12} sm={6} md={4} key={idx}>
-                <Box
-                  component={RouterLink}
-                  to={category.link || `/products?category=placeholder`}
-                  sx={{
-                    position: 'relative',
-                    display: 'block',
-                    height: { xs: 240, md: 360 },
-                    overflow: 'hidden',
-                    borderRadius: 2,
-                    textDecoration: 'none',
-                    boxShadow: '0 6px 30px rgba(0,0,0,0.1)',
-                    background: `url(${getCategoryImage(category.name)}) no-repeat center center`,
-                    backgroundSize: 'cover',
-                    backgroundColor: '#f8f9fa',
-                    transition: 'transform 0.5s ease',
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      height: '100%',
-                      background: 'linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.2) 70%, rgba(0, 0, 0, 0) 100%)',
-                      transition: 'opacity 0.3s ease',
-                    },
-                    '&:hover': {
-                      transform: 'scale(1.02)',
-                      '&::after': {
-                        opacity: 0.95,
-                      },
-                    },
-                  }}
-                >
-                  <Typography
-                    variant="h3"
-                    sx={{
-                      position: 'absolute',
-                      bottom: { xs: 24, md: 32 },
-                      left: { xs: 24, md: 32 },
-                      right: { xs: 24, md: 32 },
-                      color: '#FFFFFF',
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: { xs: '1.75rem', md: '2.25rem' },
-                      fontWeight: 700,
-                      textShadow: '0 4px 16px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
-                      zIndex: 1,
-                      wordBreak: 'break-word',
-                      whiteSpace: 'normal',
-                      overflowWrap: 'break-word',
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {category.name}
-                  </Typography>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
         </Container>
       </Box>
     </Box>
