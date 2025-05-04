@@ -13,5 +13,6 @@
         "outputDirectory": "dist"
       }
     }
-  ]
+  ],
+  "framework": "vite"
 } 
