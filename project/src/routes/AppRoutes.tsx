@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import AdminRoute from './AdminRoute';
 import Layout from '../components/layout/Layout';
@@ -27,6 +27,9 @@ const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const ShowcasePage = lazy(() => import('../pages/ShowcasePage'));
 
+// Ruta de ejemplo para los tutoriales
+const MicroTutorialExample = lazy(() => import('../components/tutorial/MicroTutorialExample'));
+
 const AppRoutes = () => {
   return (
     <Suspense fallback={<LoadingScreen />}>
@@ -42,6 +45,11 @@ const AppRoutes = () => {
           <Route path="register" element={<RegisterPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
           <Route path="showcase" element={<ShowcasePage />} />
+          <Route path="tutorial-example" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <MicroTutorialExample />
+            </Suspense>
+          } />
           <Route path="404" element={<NotFoundPage />} />
           
           {/* Protected customer routes */}

@@ -5,6 +5,8 @@ import Header from './Header';
 import Footer from './Footer';
 import ScrollToTop from '../ui/ScrollToTop';
 import CartDrawer from '../cart/CartDrawer';
+import OnboardingWizard from '../onboarding/OnboardingWizard';
+import HomeTutorial from '../tutorial/HomeTutorial';
 
 const Layout: React.FC = () => {
   return (
@@ -22,6 +24,8 @@ const Layout: React.FC = () => {
       </Box>
       <CartDrawer />
       <Footer />
+      <OnboardingWizard />
+      <HomeTutorial />
     </Box>
   );
 };

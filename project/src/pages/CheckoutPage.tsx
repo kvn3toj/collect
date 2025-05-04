@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 import { ArrowLeft, ArrowRight, CreditCard, Truck, Check } from 'lucide-react';
 import useCartStore from '../stores/cartStore';
+import CheckoutTutorial from '../components/tutorial/CheckoutTutorial';
 
 // Pasos del checkout
 const steps = ['Shipping', 'Payment', 'Review'];
@@ -190,7 +191,7 @@ const CheckoutPage = () => {
 
   // Renderizar paso de envío
   const renderShippingStep = () => (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} id="shipping-form">
       <Grid item xs={12} sm={6}>
         <TextField
           required
@@ -329,7 +330,7 @@ const CheckoutPage = () => {
 
   // Renderizar paso de pago
   const renderPaymentStep = () => (
-    <Grid container spacing={3}>
+    <Grid container spacing={3} id="payment-method">
       <Grid item xs={12}>
         <TextField
           required
@@ -547,21 +548,17 @@ const CheckoutPage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {!orderComplete ? (
+    <Container maxWidth="lg" sx={{ py: 4, position: 'relative' }}>
+      <CheckoutTutorial />
+      
+      <Typography variant="h4" sx={{ mb: 4, fontFamily: "'Playfair Display', serif" }}>
+        {orderComplete ? 'Order Confirmed' : 'Checkout'}
+      </Typography>
+      
+      {orderComplete ? (
+        renderOrderComplete()
+      ) : (
         <>
-          <Box sx={{ mb: 4 }}>
-            <Button 
-              startIcon={<ArrowLeft />} 
-              onClick={() => navigate('/cart')}
-            >
-              Back to Cart
-            </Button>
-            <Typography variant="h4" component="h1" gutterBottom sx={{ mt: 2 }}>
-              Checkout
-            </Typography>
-          </Box>
-          
           <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
             {steps.map((label) => (
               <Step key={label}>
@@ -573,77 +570,106 @@ const CheckoutPage = () => {
           <Grid container spacing={4}>
             <Grid item xs={12} md={8}>
               <Paper sx={{ p: 3, mb: { xs: 3, md: 0 } }}>
-                {loading ? (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4 }}>
-                    <CircularProgress />
-                    <Typography sx={{ mt: 2 }}>Processing your order...</Typography>
-                  </Box>
-                ) : (
-                  getStepContent(activeStep)
-                )}
-                
-                {!loading && (
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-                    <Button
-                      disabled={activeStep === 0}
-                      onClick={handleBack}
-                      sx={{ mr: 1 }}
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={handleNext}
-                      endIcon={activeStep === steps.length - 1 ? undefined : <ArrowRight />}
-                    >
-                      {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
-                    </Button>
-                  </Box>
-                )}
+                {getStepContent(activeStep)}
               </Paper>
             </Grid>
             
             <Grid item xs={12} md={4}>
-              <Paper sx={{ p: 3 }}>
+              <Paper sx={{ p: 3 }} id="cart-review">
                 <Typography variant="h6" gutterBottom>
                   Order Summary
                 </Typography>
-                {cartItems.map(item => (
-                  <Box key={item.productId} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                
+                <Box sx={{ maxHeight: '300px', overflowY: 'auto', mb: 2 }}>
+                  {cartItems.map((item) => (
+                    <Box key={item.product.id} sx={{ mb: 2, display: 'flex' }}>
+                      <Box
+                        component="img"
+                        src={item.product.images?.[0] || '/placeholder.jpg'}
+                        alt={item.product.name}
+                        sx={{ width: 60, height: 60, objectFit: 'cover', mr: 2 }}
+                      />
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="body2" fontWeight="medium">
+                          {item.product.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Qty: {item.quantity}
+                        </Typography>
+                        <Typography variant="body2">
+                          ${item.totalPrice?.toFixed(2) ?? 
+                            ((item.product?.price ?? 0) * (item.quantity ?? 1)).toFixed(2)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+                
+                <Divider sx={{ my: 2 }} />
+                
+                <Box sx={{ mb: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2">Subtotal</Typography>
+                    <Typography variant="body2">${subtotal.toFixed(2)}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2">Shipping</Typography>
                     <Typography variant="body2">
-                      {(item.product?.nombre || item.product?.name || 'Producto')} × {item.quantity}
-                    </Typography>
-                    <Typography variant="body2">
-                      ${(item.totalPrice ?? (item.product?.precio ?? item.product?.price ?? 0) * item.quantity).toFixed(2)}
+                      {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
                     </Typography>
                   </Box>
-                ))}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2">Tax</Typography>
+                    <Typography variant="body2">${tax.toFixed(2)}</Typography>
+                  </Box>
+                </Box>
+                
                 <Divider sx={{ my: 2 }} />
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Subtotal</Typography>
-                  <Typography variant="body2">${subtotal.toFixed(2)}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Tax</Typography>
-                  <Typography variant="body2">${tax.toFixed(2)}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Shipping</Typography>
-                  <Typography variant="body2">{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</Typography>
-                </Box>
-                <Divider sx={{ my: 2 }} />
+                
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <Typography variant="subtitle1" fontWeight="bold">Total</Typography>
-                  <Typography variant="subtitle1" fontWeight="bold">${total.toFixed(2)}</Typography>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    Total
+                  </Typography>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    ${total.toFixed(2)}
+                  </Typography>
+                </Box>
+                
+                <Box id="certificate-info" sx={{ mb: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
+                  <Typography variant="body2" fontWeight="medium" gutterBottom>
+                    Certificación y Garantía
+                  </Typography>
+                  <Typography variant="caption">
+                    Todas nuestras joyas incluyen certificado GIA de autenticidad, garantía internacional 
+                    y seguimiento de origen ético de las esmeraldas colombianas.
+                  </Typography>
                 </Box>
               </Paper>
             </Grid>
           </Grid>
+          
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+            <Button
+              startIcon={<ArrowLeft />}
+              onClick={activeStep === 0 ? handleReturnToHome : handleBack}
+            >
+              {activeStep === 0 ? 'Back to Shopping' : 'Back'}
+            </Button>
+            <div id="final-review">
+              <Button
+                variant="contained"
+                endIcon={
+                  loading ? <CircularProgress size={24} color="inherit" /> : 
+                  activeStep === steps.length - 1 ? <Check /> : <ArrowRight />
+                }
+                onClick={handleNext}
+                disabled={loading}
+              >
+                {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
+              </Button>
+            </div>
+          </Box>
         </>
-      ) : (
-        <Paper sx={{ p: 4 }}>
-          {renderOrderComplete()}
-        </Paper>
       )}
     </Container>
   );

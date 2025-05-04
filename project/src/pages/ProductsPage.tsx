@@ -26,6 +26,7 @@ import { motion } from 'framer-motion';
 import { productService } from '../services/productService';
 import ProductGrid from '../components/products/ProductGrid';
 import { ProductFilter, Product } from '../types/product.types';
+import CatalogTutorial from '../components/tutorial/CatalogTutorial';
 
 // Definición de interfaz para opciones de catálogo
 interface CatalogOption {
@@ -84,11 +85,11 @@ const ProductsPage: React.FC = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['products', filters],
     queryFn: () => {
-      // Comentado para despliegue visual estático en Vercel
-      // return productService.getAllProducts(filters);
+      // Utilizamos el servicio de productos para obtener los datos reales
+      return productService.getAllProducts(filters);
       
-      // Retornando datos vacíos para visualización
-      return Promise.resolve({ products: [] as Product[], total: 0 });
+      // Comentado: datos estáticos para visualización
+      // return Promise.resolve({ products: [] as Product[], total: 0 });
     },
     // Desactivar la recarga automática
     staleTime: Infinity,
@@ -97,11 +98,7 @@ const ProductsPage: React.FC = () => {
     refetchOnWindowFocus: false
   });
 
-  // Para el despliegue visual estático, siempre usamos un array vacío
-  const filteredAndSortedProducts: Product[] = [];
-  
-  // Comentado para despliegue visual estático
-  /*
+  // Usar los productos obtenidos de la API
   const filteredAndSortedProducts = useMemo(() => {
     if (!data?.products?.length) return [];
     
@@ -137,7 +134,9 @@ const ProductsPage: React.FC = () => {
     
     return result;
   }, [data?.products, filters.category, filters.metal, filters.sortBy]);
-  */
+  
+  // Comentado: Para el despliegue visual estático, array vacío
+  // const filteredAndSortedProducts: Product[] = [];
 
   // Aplicar filtros (guarda los filtros actuales como activos)
   const applyFilters = (): void => {
@@ -226,424 +225,382 @@ const ProductsPage: React.FC = () => {
   const formatPriceLabel = (value: number): string => `$${(value / 1000000).toFixed(1)}M`;
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Container maxWidth="xl" sx={{ pt: { xs: 2, md: 4 }, pb: { xs: 4, md: 8 } }}>
-        {/* Header Section */}
-        <Box sx={{ mb: { xs: 3, md: 5 } }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* Integrar el tutorial del catálogo */}
+      <CatalogTutorial />
+      
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" component="h1" sx={{ fontFamily: "'Playfair Display', serif", mb: 1 }}>
+          Discover our Collection
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Each piece is crafted with ethically sourced Colombian emeralds and precious metals.
+        </Typography>
+      </Box>
+      
+      <Grid container spacing={4}>
+        {/* Sidebar de filtros */}
+        <Grid item xs={12} md={3}>
+          <Paper 
+            id="filter-panel"
+            elevation={0} 
+            sx={{
+              p: 3,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              borderRadius: 2,
+              mb: { xs: 3, md: 0 }
+            }}
           >
-            <Typography
-              variant="h1"
-              component="h1"
-              sx={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: { xs: '2rem', md: '2.75rem' },
-                fontWeight: 700,
-                color: 'text.primary',
-                textAlign: 'center',
-                mb: 2,
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Luxury Emerald Collection
+            <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>
+              Filters
             </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                textAlign: 'center',
-                maxWidth: '800px',
-                mx: 'auto',
-                mb: 4,
-                color: 'text.secondary',
-                fontFamily: "'Lato', sans-serif",
-                fontSize: { xs: '1rem', md: '1.125rem' },
-                lineHeight: 1.6,
-                letterSpacing: '0.01em',
-              }}
-            >
-              Discover our curated collection of exceptional emeralds and fine jewelry pieces
-            </Typography>
-          </motion.div>
-        </Box>
-
-        {/* Active Filters */}
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: 1, 
-            mb: 3,
-            alignItems: 'center'
-          }}
-        >
-          {hasActiveFilters && (
-            <Button
-              onClick={clearFilters}
-              variant="text"
-              color="primary"
-              startIcon={<Close fontSize="small" />}
-              sx={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                letterSpacing: '0.02em',
-                mr: 1,
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                }
-              }}
-            >
-              Clear All Filters
-            </Button>
-          )}
-          {activeFilters.category && (
-            <Chip
-              label={jewelryTypeOptions.find(opt => opt.value === activeFilters.category)?.label}
-              onDelete={() => removeFilter('category')}
-              sx={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.875rem',
-                borderRadius: theme.shape.borderRadius,
-                bgcolor: alpha(theme.palette.primary.main, 0.08),
-                color: 'text.primary',
-                '& .MuiChip-deleteIcon': {
-                  color: 'text.secondary',
-                  '&:hover': {
-                    color: 'text.primary',
+            
+            {/* Search Field */}
+            <Box component="form" onSubmit={handleSearch} sx={{ mb: 3 }}>
+              <TextField
+                fullWidth
+                placeholder="Search emerald jewelry..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                size="small"
+                InputProps={{
+                  endAdornment: (
+                    <IconButton 
+                      type="submit" 
+                      edge="end"
+                      sx={{
+                        color: theme.palette.primary.main,
+                      }}
+                    >
+                      <Search fontSize="small" />
+                    </IconButton>
+                  ),
+                  sx: {
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.9rem',
+                    '&::placeholder': {
+                      fontStyle: 'italic',
+                      color: '#999',
+                    }
                   }
-                }
-              }}
-            />
-          )}
-        </Box>
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 0,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      borderColor: theme.palette.primary.main,
+                    },
+                    '&.Mui-focused': {
+                      borderColor: theme.palette.primary.main,
+                      boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.25)}`,
+                    }
+                  },
+                }}
+              />
+            </Box>
 
-        <Grid container spacing={4}>
-          {/* Filters Panel */}
-          <Grid item xs={12} md={3}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: { xs: 2, md: 3 },
-                borderRadius: theme.shape.borderRadius,
-                border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                bgcolor: 'background.paper',
-                position: 'sticky',
-                top: 100,
-                maxHeight: 'calc(100vh - 120px)',
-                overflowY: 'auto',
-                '&::-webkit-scrollbar': {
-                  width: '6px',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                  borderRadius: '3px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                }
-              }}
-            >
-              {/* Search Field */}
-              <Box component="form" onSubmit={handleSearch} sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  placeholder="Search emerald jewelry..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  size="small"
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton 
-                        type="submit" 
-                        edge="end"
-                        sx={{
-                          color: theme.palette.primary.main,
-                        }}
-                      >
-                        <Search fontSize="small" />
-                      </IconButton>
-                    ),
-                    sx: {
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '0.9rem',
-                      '&::placeholder': {
-                        fontStyle: 'italic',
-                        color: '#999',
-                      }
+            {/* Filter Sections */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Category Filter */}
+              <FormControl>
+                <InputLabel 
+                  id="category-label"
+                  sx={{ 
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                  }}
+                >
+                  Jewelry Type
+                </InputLabel>
+                <Select
+                  labelId="category-label"
+                  value={filters.category || ''}
+                  onChange={handleCategoryChange}
+                  label="Jewelry Type"
+                  sx={{
+                    fontFamily: "'Lato', sans-serif",
+                    '& .MuiSelect-select': {
+                      fontSize: '0.875rem',
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: alpha(theme.palette.divider, 0.2),
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.palette.primary.main,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: theme.palette.primary.main,
                     }
                   }}
+                >
+                  <MenuItem value="" sx={{ fontFamily: "'Lato', sans-serif" }}>
+                    All Types
+                  </MenuItem>
+                  {jewelryTypeOptions.map((option) => (
+                    <MenuItem 
+                      key={option.value} 
+                      value={option.value}
+                      sx={{ 
+                        fontFamily: "'Lato', sans-serif",
+                        fontSize: '0.875rem',
+                      }}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Price Range Filter */}
+              <Box>
+                <Typography
+                  variant="subtitle2"
                   sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 0,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        borderColor: theme.palette.primary.main,
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    mb: 2,
+                    color: 'text.primary',
+                  }}
+                >
+                  Price Range
+                </Typography>
+                <Slider
+                  value={filters.priceRange}
+                  onChange={handlePriceRangeChange}
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={10000000}
+                  step={100000}
+                  valueLabelFormat={formatPriceLabel}
+                  sx={{
+                    color: theme.palette.primary.main,
+                    '& .MuiSlider-thumb': {
+                      width: 12,
+                      height: 12,
+                      transition: 'all 0.2s ease',
+                      '&:hover, &.Mui-focusVisible': {
+                        boxShadow: `0 0 0 8px ${alpha(theme.palette.primary.main, 0.16)}`,
                       },
-                      '&.Mui-focused': {
-                        borderColor: theme.palette.primary.main,
-                        boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.25)}`,
-                      }
+                      '&.Mui-active': {
+                        width: 16,
+                        height: 16,
+                      },
+                    },
+                    '& .MuiSlider-rail': {
+                      opacity: 0.32,
                     },
                   }}
                 />
-              </Box>
-
-              {/* Filter Sections */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {/* Category Filter */}
-                <FormControl>
-                  <InputLabel 
-                    id="category-label"
-                    sx={{ 
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                    }}
-                  >
-                    Jewelry Type
-                  </InputLabel>
-                  <Select
-                    labelId="category-label"
-                    value={filters.category || ''}
-                    onChange={handleCategoryChange}
-                    label="Jewelry Type"
-                    sx={{
-                      fontFamily: "'Lato', sans-serif",
-                      '& .MuiSelect-select': {
-                        fontSize: '0.875rem',
-                      },
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: alpha(theme.palette.divider, 0.2),
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: theme.palette.primary.main,
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: theme.palette.primary.main,
-                      }
-                    }}
-                  >
-                    <MenuItem value="" sx={{ fontFamily: "'Lato', sans-serif" }}>
-                      All Types
-                    </MenuItem>
-                    {jewelryTypeOptions.map((option) => (
-                      <MenuItem 
-                        key={option.value} 
-                        value={option.value}
-                        sx={{ 
-                          fontFamily: "'Lato', sans-serif",
-                          fontSize: '0.875rem',
-                        }}
-                      >
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Price Range Filter */}
-                <Box>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                      mb: 2,
-                      color: 'text.primary',
-                    }}
-                  >
-                    Price Range
-                  </Typography>
-                  <Slider
-                    value={filters.priceRange}
-                    onChange={handlePriceRangeChange}
-                    valueLabelDisplay="auto"
-                    min={0}
-                    max={10000000}
-                    step={100000}
-                    valueLabelFormat={formatPriceLabel}
-                    sx={{
-                      color: theme.palette.primary.main,
-                      '& .MuiSlider-thumb': {
-                        width: 12,
-                        height: 12,
-                        transition: 'all 0.2s ease',
-                        '&:hover, &.Mui-focusVisible': {
-                          boxShadow: `0 0 0 8px ${alpha(theme.palette.primary.main, 0.16)}`,
-                        },
-                        '&.Mui-active': {
-                          width: 16,
-                          height: 16,
-                        },
-                      },
-                      '& .MuiSlider-rail': {
-                        opacity: 0.32,
-                      },
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      mt: 1,
-                      px: 1,
-                    }}
-                  >
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        fontFamily: "'Lato', sans-serif",
-                        color: 'text.secondary',
-                      }}
-                    >
-                      ${formatPriceLabel(filters.priceRange?.[0] ?? 0)}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        fontFamily: "'Lato', sans-serif",
-                        color: 'text.secondary',
-                      }}
-                    >
-                      ${formatPriceLabel(filters.priceRange?.[1] ?? 10000000)}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {/* Apply Filters Button */}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={applyFilters}
-                  sx={{
-                    py: 1.5,
-                    fontFamily: "'Lato', sans-serif",
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.02em',
-                    borderRadius: theme.shape.borderRadius,
-                    boxShadow: 'none',
-                    '&:hover': {
-                      boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.2)}`,
-                      transform: 'translateY(-1px)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  Apply Filters
-                </Button>
-              </Box>
-            </Paper>
-          </Grid>
-
-          {/* Products Grid */}
-          <Grid item xs={12} md={9}>
-            {isLoading ? (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  minHeight: 400,
-                }}
-              >
-                <CircularProgress size={40} thickness={4} />
-              </Box>
-            ) : error ? (
-              <Alert 
-                severity="error"
-                sx={{
-                  borderRadius: theme.shape.borderRadius,
-                  fontFamily: "'Lato', sans-serif",
-                }}
-              >
-                Error loading products. Please try again later.
-              </Alert>
-            ) : filteredAndSortedProducts.length > 0 ? (
-              <>
                 <Box
                   sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mb: 3,
+                    mt: 1,
+                    px: 1,
                   }}
                 >
                   <Typography
-                    variant="body2"
+                    variant="caption"
                     sx={{
                       fontFamily: "'Lato', sans-serif",
                       color: 'text.secondary',
                     }}
                   >
-                    Showing {filteredAndSortedProducts.length} products
+                    ${formatPriceLabel(filters.priceRange?.[0] ?? 0)}
                   </Typography>
-                  <FormControl
-                    size="small"
+                  <Typography
+                    variant="caption"
                     sx={{
-                      minWidth: 200,
+                      fontFamily: "'Lato', sans-serif",
+                      color: 'text.secondary',
                     }}
                   >
-                    <Select
-                      value={filters.sortBy}
-                      onChange={handleSortChange}
-                      displayEmpty
-                      sx={{
-                        fontFamily: "'Lato', sans-serif",
-                        fontSize: '0.875rem',
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: alpha(theme.palette.divider, 0.2),
-                        },
-                      }}
-                    >
-                      <MenuItem value="newest" sx={{ fontFamily: "'Lato', sans-serif" }}>Newest First</MenuItem>
-                      <MenuItem value="price-asc" sx={{ fontFamily: "'Lato', sans-serif" }}>Price: Low to High</MenuItem>
-                      <MenuItem value="price-desc" sx={{ fontFamily: "'Lato', sans-serif" }}>Price: High to Low</MenuItem>
-                    </Select>
-                  </FormControl>
+                    ${formatPriceLabel(filters.priceRange?.[1] ?? 10000000)}
+                  </Typography>
                 </Box>
-
-                <ProductGrid products={filteredAndSortedProducts} />
-              </>
-            ) : (
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: 400,
-                textAlign: 'center'
-              }}>
-                <Typography 
-                  variant="h5" 
-                  sx={{ 
-                    mb: 2,
-                    fontFamily: "'Playfair Display', serif",
-                    color: 'text.primary'
-                  }}
-                >
-                  No products available
-                </Typography>
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
-                    fontFamily: "'Lato', sans-serif",
-                    color: 'text.secondary',
-                    maxWidth: '600px'
-                  }}
-                >
-                  Our collection is currently being updated. Please check back soon to discover our exquisite emerald pieces.
-                </Typography>
               </Box>
-            )}
-          </Grid>
+
+              {/* Apply Filters Button */}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={applyFilters}
+                sx={{
+                  py: 1.5,
+                  fontFamily: "'Lato', sans-serif",
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.02em',
+                  borderRadius: theme.shape.borderRadius,
+                  boxShadow: 'none',
+                  '&:hover': {
+                    boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.2)}`,
+                    transform: 'translateY(-1px)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                Apply Filters
+              </Button>
+            </Box>
+          </Paper>
         </Grid>
-      </Container>
-    </Box>
+        
+        {/* Área principal de contenido */}
+        <Grid item xs={12} md={9}>
+          {/* Filtros activos */}
+          {(activeFilters.category || 
+           activeFilters.metal || 
+           activeFilters.priceRange ||
+           activeFilters.tags.length > 0 ||
+           activeFilters.inStock) && (
+            <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
+              <Typography variant="body2" sx={{ mr: 1 }}>Active filters:</Typography>
+              
+              {activeFilters.category && (
+                <Chip
+                  label={jewelryTypeOptions.find(opt => opt.value === activeFilters.category)?.label}
+                  onDelete={() => removeFilter('category')}
+                  sx={{
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.875rem',
+                    borderRadius: theme.shape.borderRadius,
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    color: 'text.primary',
+                    '& .MuiChip-deleteIcon': {
+                      color: 'text.secondary',
+                      '&:hover': {
+                        color: 'text.primary',
+                      }
+                    }
+                  }}
+                />
+              )}
+              {activeFilters.metal && (
+                <Chip
+                  label={activeFilters.metal}
+                  onDelete={() => removeFilter('metal')}
+                  sx={{
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.875rem',
+                    borderRadius: theme.shape.borderRadius,
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    color: 'text.primary',
+                    '& .MuiChip-deleteIcon': {
+                      color: 'text.secondary',
+                      '&:hover': {
+                        color: 'text.primary',
+                      }
+                    }
+                  }}
+                />
+              )}
+              {activeFilters.priceRange && (
+                <Chip
+                  label={`${formatPriceLabel(activeFilters.priceRange[0])} - ${formatPriceLabel(activeFilters.priceRange[1])}`}
+                  onDelete={() => removeFilter('priceRange')}
+                  sx={{
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.875rem',
+                    borderRadius: theme.shape.borderRadius,
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    color: 'text.primary',
+                    '& .MuiChip-deleteIcon': {
+                      color: 'text.secondary',
+                      '&:hover': {
+                        color: 'text.primary',
+                      }
+                    }
+                  }}
+                />
+              )}
+              {activeFilters.tags.length > 0 && (
+                activeFilters.tags.map(tag => (
+                  <Chip
+                    key={tag}
+                    label={tag}
+                    onDelete={() => removeFilter('tag', tag)}
+                    sx={{
+                      fontFamily: "'Lato', sans-serif",
+                      fontSize: '0.875rem',
+                      borderRadius: theme.shape.borderRadius,
+                      bgcolor: alpha(theme.palette.primary.main, 0.08),
+                      color: 'text.primary',
+                      '& .MuiChip-deleteIcon': {
+                        color: 'text.secondary',
+                        '&:hover': {
+                          color: 'text.primary',
+                        }
+                      }
+                    }}
+                  />
+                ))
+              )}
+              {activeFilters.inStock && (
+                <Chip
+                  label={activeFilters.inStock ? 'In Stock' : 'Out of Stock'}
+                  onDelete={() => removeFilter('inStock')}
+                  sx={{
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '0.875rem',
+                    borderRadius: theme.shape.borderRadius,
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    color: 'text.primary',
+                    '& .MuiChip-deleteIcon': {
+                      color: 'text.secondary',
+                      '&:hover': {
+                        color: 'text.primary',
+                      }
+                    }
+                  }}
+                />
+              )}
+              
+              <Button 
+                size="small" 
+                onClick={clearFilters}
+                sx={{ ml: 1 }}
+              >
+                Clear All
+              </Button>
+            </Box>
+          )}
+          
+          {/* Resultados */}
+          {isLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}>
+              <CircularProgress />
+            </Box>
+          ) : error ? (
+            <Alert severity="error">
+              Error loading products. Please try again later.
+            </Alert>
+          ) : filteredAndSortedProducts.length === 0 ? (
+            <Alert severity="info">
+              No products found matching your criteria. Try adjusting your filters.
+            </Alert>
+          ) : (
+            <Box sx={{ mt: 2 }}>
+              <ProductGrid products={filteredAndSortedProducts} cardId="product-card" certificationId="certification-badge" originId="origin-info" />
+              <Box sx={{ textAlign: 'center', mt: 4, mb: 3 }} id="special-collections">
+                <Typography variant="h5" gutterBottom sx={{ fontFamily: "'Playfair Display', serif" }}>
+                  Special Collections
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 2 }}>
+                  Discover our exclusive collections designed for special occasions
+                </Typography>
+                <Button variant="outlined" color="primary">
+                  Explore Collections
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

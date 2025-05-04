@@ -16,6 +16,7 @@ import {
   TextField
 } from '@mui/material';
 import { ArrowLeft, Save, ShoppingCart } from 'lucide-react';
+import ConfiguratorTutorial from '../components/tutorial/ConfiguratorTutorial';
 
 // Simulamos la función de servicio para obtener un producto personalizable
 const getCustomizableProduct = async (id: string) => {
@@ -139,7 +140,10 @@ const CustomizerPage = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4, position: 'relative' }}>
+      {/* Integramos el tutorial del configurador */}
+      <ConfiguratorTutorial />
+      
       <Button 
         startIcon={<ArrowLeft />} 
         sx={{ mb: 3 }} 
@@ -159,7 +163,7 @@ const CustomizerPage = () => {
       <Grid container spacing={4}>
         {/* Product Preview */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, mb: 3, position: 'relative' }}>
+          <Paper sx={{ p: 3, mb: 3, position: 'relative' }} id="preview-3d">
             <Typography variant="h6" gutterBottom>Preview</Typography>
             <Box
               component="img"
@@ -200,21 +204,15 @@ const CustomizerPage = () => {
           <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
             <Button 
               variant="outlined" 
-              color="primary" 
-              size="large"
               startIcon={<Save />}
               onClick={handleSaveCustomization}
-              sx={{ flex: 1 }}
             >
               Save Design
             </Button>
             <Button 
               variant="contained" 
-              color="primary" 
-              size="large"
               startIcon={<ShoppingCart />}
               onClick={handleAddToCart}
-              sx={{ flex: 1 }}
             >
               Add to Cart
             </Button>
@@ -224,100 +222,99 @@ const CustomizerPage = () => {
         {/* Customization Options */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>Customize Your Product</Typography>
+            <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
+              <Tab label="Basic Options" />
+              <Tab label="Advanced Options" />
+            </Tabs>
             
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={activeTab} onChange={handleTabChange} aria-label="customization options">
-                <Tab label="Colors & Materials" />
-                <Tab label="Engraving" />
-                <Tab label="Sizing" />
-              </Tabs>
-            </Box>
-            
-            {/* Colors & Materials Tab */}
-            <Box role="tabpanel" hidden={activeTab !== 0} sx={{ mt: 3 }}>
-              {activeTab === 0 && (
-                <>
-                  <Typography variant="subtitle1" gutterBottom>Select Color</Typography>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-                    {product.customizationOptions.colors.map(color => (
+            <Box hidden={activeTab !== 0}>
+              <Grid container spacing={3}>
+                {/* Gemstone selector */}
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" gutterBottom>Stone Type</Typography>
+                  <Box id="gemstone-selector" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    {['Emerald', 'Sapphire', 'Ruby', 'Diamond', 'Amethyst'].map((stone) => (
                       <Button 
-                        key={color}
-                        variant={customizations.color === color ? "contained" : "outlined"}
-                        onClick={() => setCustomizations({...customizations, color})}
-                        sx={{ minWidth: 'auto', px: 2 }}
+                        key={stone}
+                        variant={customizations.color === stone ? 'contained' : 'outlined'}
+                        onClick={() => setCustomizations({...customizations, color: stone})}
+                        sx={{ minWidth: 100 }}
                       >
-                        {color}
+                        {stone}
                       </Button>
                     ))}
                   </Box>
-                  
-                  <Typography variant="subtitle1" gutterBottom>Select Material</Typography>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                    {product.customizationOptions.materials.map(material => (
+                </Grid>
+                
+                {/* Metal selector */}
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" gutterBottom>Metal</Typography>
+                  <Box id="metal-selector" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    {['Gold', 'Silver', 'Platinum', 'Rose Gold', 'White Gold'].map((metal) => (
                       <Button 
-                        key={material}
-                        variant={customizations.material === material ? "contained" : "outlined"}
-                        onClick={() => setCustomizations({...customizations, material})}
-                        sx={{ minWidth: 'auto', px: 2 }}
+                        key={metal}
+                        variant={customizations.material === metal ? 'contained' : 'outlined'}
+                        onClick={() => setCustomizations({...customizations, material: metal})}
+                        sx={{ minWidth: 100 }}
                       >
-                        {material}
+                        {metal}
                       </Button>
                     ))}
                   </Box>
-                </>
-              )}
+                </Grid>
+                
+                {/* Setting selector */}
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" gutterBottom>Setting Style</Typography>
+                  <Box id="setting-selector" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    {['Prong', 'Bezel', 'Pave', 'Channel', 'Tension'].map((setting) => (
+                      <Button 
+                        key={setting}
+                        variant="outlined"
+                        sx={{ minWidth: 100 }}
+                      >
+                        {setting}
+                      </Button>
+                    ))}
+                  </Box>
+                </Grid>
+              </Grid>
             </Box>
             
-            {/* Engraving Tab */}
-            <Box role="tabpanel" hidden={activeTab !== 1} sx={{ mt: 3 }}>
-              {activeTab === 1 && (
-                <>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Add Personalized Engraving
-                  </Typography>
+            <Box hidden={activeTab !== 1}>
+              <Grid container spacing={3}>
+                {/* Additional options */}
+                <Grid item xs={12} id="additional-options">
+                  <Typography variant="subtitle1" gutterBottom>Engraving</Typography>
                   <TextField
                     fullWidth
                     label="Engraving Text"
                     variant="outlined"
                     value={customizations.engravingText}
                     onChange={handleCustomizationChange('engravingText')}
-                    helperText="Maximum 20 characters"
-                    inputProps={{ maxLength: 20 }}
-                    sx={{ mb: 2 }}
+                    placeholder="Enter text to engrave"
+                    helperText="Up to 20 characters"
                   />
-                  <Alert severity="info" sx={{ mb: 2 }}>
-                    Engraving will appear on the product as shown in the preview. 
-                    Please review your text carefully before adding to cart.
-                  </Alert>
-                </>
-              )}
-            </Box>
-            
-            {/* Sizing Tab */}
-            <Box role="tabpanel" hidden={activeTab !== 2} sx={{ mt: 3 }}>
-              {activeTab === 2 && (
-                <>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Select Size (Min: {product.customizationOptions.sizing.min}, 
-                    Max: {product.customizationOptions.sizing.max})
-                  </Typography>
+                </Grid>
+                
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" gutterBottom>Size</Typography>
                   <TextField
-                    fullWidth
-                    label="Size"
                     type="number"
+                    label="Size"
                     variant="outlined"
                     value={customizations.size}
                     onChange={handleSizeChange}
-                    inputProps={{ 
-                      step: product.customizationOptions.sizing.step,
-                      min: product.customizationOptions.sizing.min,
-                      max: product.customizationOptions.sizing.max
+                    InputProps={{
+                      inputProps: { 
+                        min: product.customizationOptions?.sizing?.min || 5, 
+                        max: product.customizationOptions?.sizing?.max || 15,
+                        step: product.customizationOptions?.sizing?.step || 0.5
+                      }
                     }}
-                    sx={{ mb: 2 }}
                   />
-                </>
-              )}
+                </Grid>
+              </Grid>
             </Box>
           </Paper>
         </Grid>

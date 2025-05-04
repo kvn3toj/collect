@@ -18,9 +18,11 @@ import ProductImage from './ProductImage';
 
 interface ProductCardProps {
   product: Product;
+  certificationId?: string;
+  originId?: string;
 }
 
-const ProductCard = ({ product }: ProductCardProps): JSX.Element => {
+const ProductCard = ({ product, certificationId, originId }: ProductCardProps): JSX.Element => {
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const { addItem } = useCartStore();
@@ -199,68 +201,96 @@ const ProductCard = ({ product }: ProductCardProps): JSX.Element => {
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              lineHeight: 1.5,
             }}
           >
-            {product.descripcionCorta || product.shortDescription}
+            {product.descripcionCorta || product.shortDescription || 'Handcrafted emerald piece made with the finest materials'}
           </Typography>
         </Box>
-
+        
         <Box>
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              mb: 1 
-            }}
-          >
-            <Rating 
-              value={4.5} 
-              precision={0.5} 
-              size="small" 
-              readOnly 
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <Box 
+              id={certificationId}
+              component="span"
               sx={{ 
-                color: theme.palette.secondary.main,
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                backgroundColor: '#F0F7F4',
+                color: theme.palette.primary.main,
+                px: 1,
+                py: 0.4,
+                borderRadius: 0.5,
+                letterSpacing: '0.05em',
+                display: 'inline-block',
                 mr: 1,
               }}
-            />
-            <Typography 
-              variant="body2" 
+            >
+              Certificado GIA
+            </Box>
+            <Box 
+              id={originId}
+              component="span"
               sx={{ 
-                color: '#666666',
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.75rem',
-              }}
-            >
-              (24 reviews)
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontFamily: "'Times New Roman', serif",
-                fontSize: '1.3rem',
+                fontSize: '0.65rem',
                 fontWeight: 600,
-                color: theme.palette.primary.main,
+                textTransform: 'uppercase',
+                backgroundColor: '#F5F5F5',
+                color: '#666666',
+                px: 1,
+                py: 0.4,
+                borderRadius: 0.5,
+                letterSpacing: '0.05em',
+                display: 'inline-block',
               }}
             >
-              {formatPrice(product.precio || product.price || 0)}
-            </Typography>
-            {product.discountPrice && (
+              Procedencia Ética
+            </Box>
+          </Box>
+          
+          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+            <Box>
+              {product.discountPrice && (
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#777777',
+                    textDecoration: 'line-through',
+                    fontSize: '0.8rem',
+                    mr: 1,
+                    fontFamily: "'Lato', sans-serif",
+                  }}
+                  component="span"
+                >
+                  {formatPrice(product.price)}
+                </Typography>
+              )}
               <Typography
-                variant="body2"
+                variant="h6"
+                component="span"
                 sx={{
-                  textDecoration: 'line-through',
-                  color: '#999',
+                  color: product.discountPrice ? theme.palette.secondary.main : theme.palette.text.primary,
                   fontFamily: "'Lato', sans-serif",
-                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  fontSize: '1.2rem',
                 }}
               >
-                {formatPrice(product.discountPrice)}
+                {formatPrice(product.discountPrice || product.price)}
               </Typography>
-            )}
+            </Box>
+            
+            <Rating 
+              value={product.rating || 5} 
+              precision={0.5} 
+              size="small" 
+              readOnly
+              sx={{
+                fontSize: '0.9rem',
+                '& .MuiRating-iconFilled': {
+                  color: theme.palette.secondary.main,
+                },
+              }}
+            />
           </Box>
         </Box>
       </CardContent>

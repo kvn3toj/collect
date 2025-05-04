@@ -7,6 +7,9 @@ interface ProductGridProps {
   products: Product[];
   isLoading?: boolean;
   error?: Error | null;
+  cardId?: string;
+  certificationId?: string;
+  originId?: string;
 }
 
 // Configuración de animación para productos
@@ -36,7 +39,14 @@ const itemVariants = {
   }
 };
 
-const ProductGrid = ({ products, isLoading, error }: ProductGridProps): JSX.Element => {
+const ProductGrid = ({ 
+  products, 
+  isLoading, 
+  error, 
+  cardId, 
+  certificationId, 
+  originId 
+}: ProductGridProps): JSX.Element => {
   const theme = useTheme();
   const isXsScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const isMdScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -90,8 +100,13 @@ const ProductGrid = ({ products, isLoading, error }: ProductGridProps): JSX.Elem
             scale: 1.01,
             transition: { duration: 0.2 } 
           }}
+          id={index === 0 ? cardId : undefined}
         >
-          <ProductCard product={product} />
+          <ProductCard 
+            product={product} 
+            certificationId={index === 0 ? certificationId : undefined}
+            originId={index === 0 ? originId : undefined}
+          />
         </motion.div>
       </Grid>
     ));
