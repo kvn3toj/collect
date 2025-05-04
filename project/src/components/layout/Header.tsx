@@ -47,6 +47,9 @@ const Header: React.FC = () => {
   const cartItemCount = getTotalItems();
   const userMenuOpen = Boolean(userMenuAnchor);
 
+  // Verificamos si el usuario tiene permisos de administrador
+  const isAdmin = user?.role === 'admin' || (user?.email && user.email.endsWith('@aretrust.co'));
+
   // Función para verificar si una ruta está activa
   const isPathActive = (path: string) => {
     return path === '/' 
@@ -251,43 +254,46 @@ const Header: React.FC = () => {
                 Colección
               </Button>
               
-              <Button
-                id="configurator-nav"
-                component={RouterLink}
-                to="/configurator"
-                sx={{
-                  color: textColor,
-                  fontFamily: "'Lato', sans-serif",
-                  fontWeight: isScrolled ? 500 : 600,
-                  mx: 1,
-                  fontSize: '0.9rem',
-                  letterSpacing: '0.02em',
-                  position: 'relative',
-                  py: 1.5,
-                  textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                    color: hoverColor,
-                  },
-                  '&:after': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: 0,
-                    left: '50%',
-                    width: isPathActive('/configurator') ? '100%' : '0%',
-                    height: 2,
-                    bgcolor: isPathActive('/configurator') ? hoverColor : 'transparent',
-                    transition: 'all 0.3s ease',
-                    transform: 'translateX(-50%)',
-                  },
-                  '&:hover:after': {
-                    width: '70%',
-                    bgcolor: hoverColor,
-                  },
-                }}
-              >
-                Configurador
-              </Button>
+              {/* Mostrar botón de Configurador solo para administradores */}
+              {isAdmin && (
+                <Button
+                  id="configurator-nav"
+                  component={RouterLink}
+                  to="/configurator"
+                  sx={{
+                    color: textColor,
+                    fontFamily: "'Lato', sans-serif",
+                    fontWeight: isScrolled ? 500 : 600,
+                    mx: 1,
+                    fontSize: '0.9rem',
+                    letterSpacing: '0.02em',
+                    position: 'relative',
+                    py: 1.5,
+                    textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      color: hoverColor,
+                    },
+                    '&:after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: 0,
+                      left: '50%',
+                      width: isPathActive('/configurator') ? '100%' : '0%',
+                      height: 2,
+                      bgcolor: isPathActive('/configurator') ? hoverColor : 'transparent',
+                      transition: 'all 0.3s ease',
+                      transform: 'translateX(-50%)',
+                    },
+                    '&:hover:after': {
+                      width: '70%',
+                      bgcolor: hoverColor,
+                    },
+                  }}
+                >
+                  Configurador
+                </Button>
+              )}
             </Box>
           )}
 
@@ -556,12 +562,58 @@ const Header: React.FC = () => {
         </Box>
         <Divider />
         <List>
-          {['Collections', 'Emeralds', 'Jewelry', 'Custom Design'].map((item) => (
+          <ListItem 
+            button 
+            component={RouterLink} 
+            to="/"
+            onClick={handleMobileMenuToggle}
+            sx={{
+              py: 1.5,
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.08),
+              }
+            }}
+          >
+            <ListItemText 
+              primary="Inicio" 
+              primaryTypographyProps={{
+                fontFamily: "'Lato', sans-serif",
+                fontSize: '0.95rem',
+                fontWeight: 500,
+                color: '#212121',
+              }}
+            />
+          </ListItem>
+          
+          <ListItem 
+            button 
+            component={RouterLink} 
+            to="/products"
+            onClick={handleMobileMenuToggle}
+            sx={{
+              py: 1.5,
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.08),
+              }
+            }}
+          >
+            <ListItemText 
+              primary="Colección" 
+              primaryTypographyProps={{
+                fontFamily: "'Lato', sans-serif",
+                fontSize: '0.95rem',
+                fontWeight: 500,
+                color: '#212121',
+              }}
+            />
+          </ListItem>
+          
+          {/* Mostrar enlace de Configurador en móvil solo para administradores */}
+          {isAdmin && (
             <ListItem 
-              key={item}
               button 
               component={RouterLink} 
-              to={item === 'Collections' ? '/products' : `/products?category=${item.toLowerCase()}`}
+              to="/configurator"
               onClick={handleMobileMenuToggle}
               sx={{
                 py: 1.5,
@@ -571,7 +623,7 @@ const Header: React.FC = () => {
               }}
             >
               <ListItemText 
-                primary={item} 
+                primary="Configurador" 
                 primaryTypographyProps={{
                   fontFamily: "'Lato', sans-serif",
                   fontSize: '0.95rem',
@@ -580,7 +632,7 @@ const Header: React.FC = () => {
                 }}
               />
             </ListItem>
-          ))}
+          )}
         </List>
         <Divider />
         <Box sx={{ p: 2 }}>
