@@ -8,6 +8,7 @@ import AppRoutes from './routes/AppRoutes';
 import useAuthStore from './stores/authStore';
 import TutorialManager from './components/tutorial/TutorialManager';
 import { MicroTutorialProvider, MicroTutorialContext } from './components/tutorial/MicroTutorial';
+import { TutorialProvider } from './components/tutorial/TutorialContext';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -28,9 +29,25 @@ const OnboardingController = () => {
     // Verificar si hay un modal de onboarding activo
     const checkForActiveOnboarding = () => {
       const onboardingElement = document.querySelector('[role="presentation"]');
+      
+      // Verificamos si el elemento encontrado es realmente el onboarding
+      // y no el tutorial de navegación básica (HomeTutorial)
+      let isOnboarding = false;
       if (onboardingElement) {
-        console.log('Onboarding detectado, pausando tutoriales automáticos');
-        setPauseAutoTutorials(true);
+        // Si el elemento tiene un contenedor con texto que contenga "ARE Trüst"
+        // o algún título del onboarding, entonces es el onboarding
+        const onboardingText = onboardingElement.textContent || '';
+        isOnboarding = onboardingText.includes('ARE Trüst') || 
+                       onboardingText.includes('Welcome to Ethical Luxury') ||
+                       onboardingText.includes('Discover Rare Beauty');
+                       
+        if (isOnboarding) {
+          console.log('Onboarding detectado, pausando tutoriales automáticos');
+          setPauseAutoTutorials(true);
+        } else {
+          // Esto probablemente es el HomeTutorial, no pausamos
+          setPauseAutoTutorials(false);
+        }
       } else {
         setPauseAutoTutorials(false);
       }
@@ -41,6 +58,20 @@ const OnboardingController = () => {
     const interval = setInterval(checkForActiveOnboarding, 1000);
     
     return () => clearInterval(interval);
+  }, [setPauseAutoTutorials]);
+  
+  // Detectar cuando se completa el onboarding
+  useEffect(() => {
+    const handleOnboardingCompleted = () => {
+      console.log('Evento onboardingCompleted detectado en App, desactivando pausa de tutoriales');
+      setPauseAutoTutorials(false);
+    };
+    
+    window.addEventListener('onboardingCompleted', handleOnboardingCompleted);
+    
+    return () => {
+      window.removeEventListener('onboardingCompleted', handleOnboardingCompleted);
+    };
   }, [setPauseAutoTutorials]);
   
   return null;
@@ -61,9 +92,11 @@ const App = (): JSX.Element => {
         <Router>
           <MicroTutorialProvider>
             <OnboardingController />
-            <TutorialManager>
-              <AppRoutes />
-            </TutorialManager>
+            <TutorialProvider>
+              <TutorialManager>
+                <AppRoutes />
+              </TutorialManager>
+            </TutorialProvider>
           </MicroTutorialProvider>
         </Router>
       </ThemeProvider>

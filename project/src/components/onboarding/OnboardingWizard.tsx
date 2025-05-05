@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Dialog, DialogContent, Box, useTheme, alpha, Slide } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
-import useOnboardingHook, { OnboardingStep as OnboardingStepType } from '../../hooks/useOnboarding';
+import useOnboardingHook from '../../hooks/useOnboarding';
 import OnboardingStep from './OnboardingStep';
 import { X } from 'lucide-react';
 
@@ -29,7 +29,6 @@ const OnboardingWizard: React.FC = () => {
     nextStep,
     prevStep,
     skipOnboarding,
-    completeOnboarding,
     closeOnboarding
   } = useOnboardingHook();
 
@@ -58,6 +57,15 @@ const OnboardingWizard: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, nextStep, prevStep, closeOnboarding]);
+
+  // Esto asegura que si el onboarding cambia a completado,
+  // se cerrará correctamente y permitirá la transición a otros tutoriales
+  useEffect(() => {
+    if (isCompleted && isOpen) {
+      // Cerrar el diálogo cuando se marca como completado
+      closeOnboarding();
+    }
+  }, [isCompleted, isOpen, closeOnboarding]);
 
   // Si el onboarding está completado, no mostrar nada
   if (isCompleted && !isOpen) return null;

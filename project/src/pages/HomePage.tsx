@@ -9,31 +9,22 @@ import {
   Card,
   CardContent,
   useTheme,
-  useMediaQuery,
-  Divider,
-  TextField,
   alpha,
   CircularProgress
 } from '@mui/material';
 import { motion } from 'framer-motion';
-import { ArrowForward, ArrowRight } from '@mui/icons-material';
-import ProductImage from '../components/products/ProductImage';
+import { ArrowRight } from '@mui/icons-material';
 import logoLight from '/images/LOGO/logo-aretrust-light.png';
 import ProductCard from '../components/products/ProductCard';
 import Slider from 'react-slick';
 import { productService } from '../services/productService';
 import { Product } from '../types/product.types';
 
-// Hero section background image
-const HERO_IMAGE = "/images/fondo.png";
-
 // IDs de los productos destacados (lotes más valiosos)
 const FEATURED_PRODUCT_IDS = ['lote-003', 'lote-004', 'lote-006'];
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'));
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 

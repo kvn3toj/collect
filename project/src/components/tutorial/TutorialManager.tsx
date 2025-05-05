@@ -9,8 +9,9 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { useLocation } from 'react-router-dom';
 
 // Importamos todas las configuraciones de tutoriales
-import { useHomeTutorial } from './HomeTutorial';
-import { useOnboarding } from '../onboarding/OnboardingWizard'; // Asumiendo que exportas este hook
+import HomeTutorial from './HomeTutorial';
+import { useTutorialContext } from './TutorialContext';
+import { useOnboarding } from '../../hooks/useOnboarding';
 import { MicroTutorialContext } from './MicroTutorial';
 
 // Contexto para gestionar los tutoriales globalmente
@@ -23,20 +24,20 @@ interface TutorialContextType {
   showCheckoutTutorial: () => void;
 }
 
-const TutorialContext = createContext<TutorialContextType | null>(null);
+const TutorialManagerContext = createContext<TutorialContextType | null>(null);
 
-export const useTutorialContext = () => {
-  const context = useContext(TutorialContext);
+export const useTutorialManagerContext = () => {
+  const context = useContext(TutorialManagerContext);
   if (!context) {
-    throw new Error('useTutorialContext debe usarse dentro de un TutorialProvider');
+    throw new Error('useTutorialManagerContext debe usarse dentro de un TutorialProvider');
   }
   return context;
 };
 
 // Componente de gestión de tutoriales
 export const TutorialManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { resetOnboarding } = useOnboarding();
-  const { resetTutorial: resetHomeTutorial, start: startHomeTutorial } = useHomeTutorial();
+  const { resetOnboarding, isCompleted: isOnboardingCompleted } = useOnboarding();
+  const { resetTutorial: resetHomeTutorial, start: startHomeTutorial } = useTutorialContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const location = useLocation();
@@ -80,9 +81,6 @@ export const TutorialManager: React.FC<{ children: React.ReactNode }> = ({ child
     if (microTutorialContext) {
       microTutorialContext.setActiveTutorial(null);
     }
-    
-    // El onboarding se mostrará automáticamente al recargar
-    window.location.reload();
   };
 
   const showHomeTutorial = () => {
@@ -157,8 +155,11 @@ export const TutorialManager: React.FC<{ children: React.ReactNode }> = ({ child
   }), []);
 
   return (
-    <TutorialContext.Provider value={contextValue}>
+    <TutorialManagerContext.Provider value={contextValue}>
       {children}
+      
+      {/* Componente de tutorial de navegación */}
+      <HomeTutorial />
       
       {/* Botón flotante de ayuda */}
       <Box sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1050 }}>
@@ -206,11 +207,23 @@ export const TutorialManager: React.FC<{ children: React.ReactNode }> = ({ child
           <ListItemText primary="Conoce ARE Trüst" />
         </MenuItem>
         
-        <MenuItem onClick={showHomeTutorial}>
+        <MenuItem 
+          onClick={showHomeTutorial}
+          disabled={!isOnboardingCompleted}
+          sx={{
+            opacity: isOnboardingCompleted ? 1 : 0.5,
+            '&:hover': {
+              backgroundColor: isOnboardingCompleted ? 'inherit' : 'transparent'
+            }
+          }}
+        >
           <ListItemIcon>
             <HelpIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText primary="Navegación básica" />
+          <ListItemText 
+            primary="Navegación básica" 
+            secondary={!isOnboardingCompleted ? "Completa el tutorial inicial primero" : undefined}
+          />
         </MenuItem>
         
         <MenuItem onClick={showConfiguratorTutorial}>
@@ -241,7 +254,7 @@ export const TutorialManager: React.FC<{ children: React.ReactNode }> = ({ child
           <ListItemText primary="Reiniciar todos los tutoriales" />
         </MenuItem>
       </Menu>
-    </TutorialContext.Provider>
+    </TutorialManagerContext.Provider>
   );
 };
 
