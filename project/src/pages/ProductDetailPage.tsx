@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Container, Grid, Typography, Button, Divider, CircularProgress, Alert, Stack } from '@mui/material';
+import { Box, Container, Grid, Typography, Button, Divider, CircularProgress, Alert, Stack, IconButton, Modal } from '@mui/material';
 import ProductImage from '../components/products/ProductImage';
-import api from '../services/api';
-import { Product } from '../types/product.types';
+import { useProduct } from '../hooks/useProduct';
+import { Award } from 'lucide-react';
+import { CertificationViewer } from '../components/premium/CertificationViewer';
 
 const formatPrice = (value?: number, currency: string = 'USD') =>
   typeof value === 'number' && value > 0
@@ -13,33 +14,24 @@ const formatPrice = (value?: number, currency: string = 'USD') =>
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: product, isLoading, error } = useProduct(id);
   const [mainImage, setMainImage] = useState<string | undefined>(undefined);
+  const [showCertificate, setShowCertificate] = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
-    setIsLoading(true);
-    setError(null);
-    
-    // Comentado para despliegue visual estático en Vercel
-    /*
-    api.get(`/products/${id}`)
-      .then(res => {
-        setProduct(res.data);
-        setMainImage(res.data.imagenesPrincipales?.[0] || res.data.images?.[0]);
-      })
-      .catch(() => setError('No se pudo cargar el producto.'))
-      .finally(() => setIsLoading(false));
-    */
-    
-    // Simulamos carga y establecemos producto como null para visualización estática
-    setTimeout(() => {
-      setIsLoading(false);
-      // No establecemos ningún producto - mostrará mensaje de producto no disponible
-    }, 500);
-  }, [id]);
+  // Actualizar imagen principal cuando cambie el producto
+  React.useEffect(() => {
+    if (product) {
+      setMainImage(product.imagenesPrincipales?.[0] || product.images?.[0]);
+    }
+  }, [product]);
+
+  const handleOpenCertificate = () => {
+    setShowCertificate(true);
+  };
+
+  const handleCloseCertificate = () => {
+    setShowCertificate(false);
+  };
 
   if (isLoading) {
     return (
@@ -52,7 +44,7 @@ const ProductDetailPage: React.FC = () => {
   if (error) {
     return (
       <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
+        <Alert severity="error" sx={{ mb: 3 }}>{error.message}</Alert>
         <Button variant="outlined" onClick={() => navigate('/products')}>Volver a productos</Button>
       </Container>
     );
@@ -79,7 +71,7 @@ const ProductDetailPage: React.FC = () => {
       <Grid container spacing={6}>
         {/* Columna Izquierda: Imagen principal y galería */}
         <Grid item xs={12} md={7}>
-          <Box sx={{ mb: 3 }}>
+          <Box sx={{ mb: 3, position: 'relative' }}>
             <ProductImage
               src={mainImage || '/placeholder.jpg'}
               alt={product.nombre || product.name || 'Producto'}
@@ -92,6 +84,25 @@ const ProductDetailPage: React.FC = () => {
                 background: '#fff',
               }}
             />
+            {/* Certificate Button */}
+            <IconButton
+              aria-label="View Certificate"
+              onClick={handleOpenCertificate}
+              sx={{
+                position: 'absolute',
+                bottom: 12,
+                right: 12,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  transform: 'scale(1.05)'
+                },
+                transition: 'all 0.2s'
+              }}
+            >
+              <Award size={20} color="#1A472A" />
+            </IconButton>
           </Box>
           {product.imagenesDetalle && product.imagenesDetalle.length > 0 && (
             <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
@@ -167,6 +178,24 @@ const ProductDetailPage: React.FC = () => {
                   <Typography component="span" sx={{ fontWeight: 600, display: 'inline' }}>ORIGEN:</Typography> <Typography component="span" sx={{ fontWeight: 400, display: 'inline' }}>{product.origenEsmeralda.replace('_',' ')}</Typography>
                 </Typography>
               )}
+              {/* Certificate info */}
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                <Award size={18} color="#1A472A" style={{ marginRight: 8 }} />
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={handleOpenCertificate}
+                  sx={{ 
+                    textTransform: 'none',
+                    fontFamily: "'Lato', sans-serif",
+                    color: '#1A472A',
+                    fontWeight: 600,
+                    p: 0
+                  }}
+                >
+                  Ver Certificado de Autenticidad
+                </Button>
+              </Box>
             </Stack>
           </Box>
           {product.descripcion && (
@@ -188,6 +217,28 @@ const ProductDetailPage: React.FC = () => {
           </Button>
         </Grid>
       </Grid>
+
+      {/* Certificate Modal */}
+      <Modal
+        open={showCertificate}
+        onClose={handleCloseCertificate}
+        aria-labelledby="certificate-modal-title"
+        aria-describedby="certificate-modal-description"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 2
+        }}
+      >
+        <Box sx={{ maxWidth: 900, width: '100%', maxHeight: '90vh', outline: 'none' }}>
+          <CertificationViewer 
+            productId={id} 
+            productName={product?.nombre || product?.name || ''} 
+            onClose={handleCloseCertificate} 
+          />
+        </Box>
+      </Modal>
     </Container>
   );
 };

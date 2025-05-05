@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { 
   Box, 
@@ -22,6 +22,61 @@ import { Product } from '../types/product.types';
 
 // IDs de los productos destacados (lotes más valiosos)
 const FEATURED_PRODUCT_IDS = ['lote-003', 'lote-004', 'lote-006'];
+
+const VideoBackground: React.FC<{ src: string }> = ({ src }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // Auto play video when loaded
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.error("Video autoplay was prevented:", error);
+      });
+    }
+  }, []);
+
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45))',
+          zIndex: 1,
+        },
+      }}
+    >
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          objectFit: 'cover',
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
+      >
+        <source src={src} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </Box>
+  );
+};
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
@@ -108,10 +163,6 @@ const HomePage: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundImage: 'linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), url(/images/fondo.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
           color: '#fff',
           textAlign: 'center',
           overflow: 'hidden',
@@ -123,10 +174,11 @@ const HomePage: React.FC = () => {
             right: 0,
             bottom: 0,
             background: 'radial-gradient(circle at center, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%)',
-            zIndex: 0,
+            zIndex: 1,
           },
         }}
       >
+        <VideoBackground src="/images/Generated File May 04, 2025 - 5_58PM.mp4" />
         <Container maxWidth="xl">
           <Box
             sx={{
@@ -140,17 +192,23 @@ const HomePage: React.FC = () => {
             }}
           >
             {/* Logo */}
-            <Box
-              component="img"
-              src={logoLight}
-              alt="ARE Trüst Logo"
-              sx={{
-                height: { xs: 50, md: 70 },
-                width: 'auto',
-                mb: { xs: 4, md: 6 },
-                filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.18))',
-              }}
-            />
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1.0] }}
+            >
+              <Box
+                component="img"
+                src={logoLight}
+                alt="ARE Trüst Logo"
+                sx={{
+                  height: { xs: 50, md: 70 },
+                  width: 'auto',
+                  mb: { xs: 4, md: 6 },
+                  filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.18))',
+                }}
+              />
+            </motion.div>
 
             {/* Text Content */}
             <motion.div
@@ -242,7 +300,7 @@ const HomePage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* Categories Section refinada */}
+      {/* Categories Section */}
       <Box sx={{ 
         py: { xs: 10, md: 16 }, 
         backgroundColor: '#fff', 
@@ -270,94 +328,140 @@ const HomePage: React.FC = () => {
               {
                 name: 'Emerald Rings',
                 link: '/products?category=rings',
-                isVideo: true,
+                image: '/images/d673450f-66d5-4a71-80ba-ecfe1f359107.jpg',
+                video: '/images/Generated File May 05, 2025 - 3_18AM.mp4',
+                hasVideo: true,
               },
               {
                 name: 'Emerald Necklaces',
                 link: '/products?category=necklaces',
+                image: '/images/3c495f60-1ad7-42c5-8f51-c3654b5ac2e8.jpg',
               },
               {
                 name: 'Emerald Earrings',
                 link: '/products?category=earrings',
+                image: '/images/d3fa3cb8-c124-49d5-aac7-f4617eff184b.jpg',
+                video: '/images/Generated File May 05, 2025 - 3_43AM.mp4',
+                hasVideo: true,
               },
-            ].map((category, idx) => (
-              <Grid item xs={12} sm={6} md={4} key={idx}>
-                <Box
-                  component={RouterLink}
-                  to={category.link || `/products?category=placeholder`}
-                  sx={{
-                    position: 'relative',
-                    display: 'block',
-                    height: { xs: 240, md: 360 },
-                    overflow: 'hidden',
-                    borderRadius: 2,
-                    textDecoration: 'none',
-                    boxShadow: '0 6px 30px rgba(0,0,0,0.1)',
-                    backgroundColor: '#f8f9fa',
-                    transition: 'transform 0.5s ease',
-                    '&:hover': {
-                      transform: 'scale(1.02)',
-                    },
-                  }}
+            ].map((category, index) => (
+              <Grid item xs={12} md={4} key={category.name}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
                 >
-                  {category.isVideo ? (
-                    <Box
-                      component="video"
-                      autoPlay
-                      muted
-                      loop
-                      sx={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
-                    >
-                      <source src="/0503.mp4" type="video/mp4" />
-                      Tu navegador no soporta videos HTML5.
-                    </Box>
-                  ) : (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        background: `url(${getCategoryImage(category.name)}) no-repeat center center`,
-                        backgroundSize: 'cover',
-                      }}
-                    />
-                  )}
-                  <Typography
-                    variant="h3"
+                  <Card
+                    component={RouterLink}
+                    to={category.link}
                     sx={{
-                      position: 'absolute',
-                      bottom: { xs: 24, md: 32 },
-                      left: { xs: 24, md: 32 },
-                      right: { xs: 24, md: 32 },
-                      color: '#FFFFFF',
-                      fontFamily: "'Playfair Display', serif",
-                      fontSize: { xs: '1.75rem', md: '2.25rem' },
-                      fontWeight: 700,
-                      textShadow: '0 4px 16px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
-                      zIndex: 1,
-                      wordBreak: 'break-word',
-                      whiteSpace: 'normal',
-                      overflowWrap: 'break-word',
-                      lineHeight: 1.3,
+                      height: '100%',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      display: 'block',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&:hover': {
+                        '& .category-overlay': {
+                          opacity: 1,
+                        },
+                        '& .category-image': {
+                          transform: 'scale(1.05)',
+                        },
+                      },
                     }}
                   >
-                    {category.name}
-                  </Typography>
-                </Box>
+                    <Box
+                      sx={{
+                        position: 'relative',
+                        paddingTop: '100%',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {category.hasVideo ? (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <video
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            className="category-image"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              transition: 'transform 0.6s ease',
+                            }}
+                          >
+                            <source src={category.video} type="video/mp4" />
+                          </video>
+                        </Box>
+                      ) : (
+                        <Box
+                          className="category-image"
+                          component="img"
+                          src={category.image}
+                          alt={category.name}
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            transition: 'transform 0.6s ease',
+                          }}
+                        />
+                      )}
+                      <Box
+                        className="category-overlay"
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          backgroundColor: 'rgba(0,0,0,0.4)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: 0,
+                          transition: 'opacity 0.4s ease',
+                        }}
+                      >
+                        <Typography
+                          variant="h5"
+                          sx={{
+                            color: '#fff',
+                            fontFamily: "'Playfair Display', serif",
+                            fontSize: { xs: '1.5rem', md: '2rem' },
+                            fontWeight: 500,
+                            textAlign: 'center',
+                            px: 2,
+                          }}
+                        >
+                          {category.name}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Card>
+                </motion.div>
               </Grid>
             ))}
           </Grid>
         </Container>
       </Box>
 
-      {/* Featured Products Section (Carrusel con lotes específicos) */}
+      {/* Featured Collection Section */}
       <Box sx={{ mt: { xs: 10, md: 16 } }}>
         <Container maxWidth="lg" sx={{ mb: { xs: 10, md: 16 } }}>
           <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
@@ -407,8 +511,12 @@ const HomePage: React.FC = () => {
           ) : (
             // Mostrar fallback para despliegue visual
             <Slider {...sliderSettings}>
-              {[1, 2, 3].map((i) => (
-                <Box key={i} px={3}>
+              {[
+                { id: 1, image: '/images/749e42ef-869e-49a8-a238-9e5725010f18.jpg' },
+                { id: 2, image: '/images/254ef962-f015-4592-b93c-d4b41fa68779.jpg', hasVideo: true, video: '/images/Generated File May 04, 2025 - 5_58PM.mp4' },
+                { id: 3, image: '/images/7da09dc3-f35d-4058-a143-feb868917677.jpg' }
+              ].map((item) => (
+                <Box key={item.id} px={3}>
                   <Card
                     sx={{
                       height: '100%',
@@ -433,20 +541,39 @@ const HomePage: React.FC = () => {
                       paddingTop: '100%', 
                       bgcolor: '#f7f7f7' 
                     }}>
-                      <Box
-                        component="img"
-                        src={`/images/products/lote-${i}.jpg`}
-                        alt={`Featured Product ${i}`}
-                        sx={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          padding: '5%',
-                        }}
-                      />
+                      {item.hasVideo ? (
+                        <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+                          <video
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              padding: '5%',
+                            }}
+                          >
+                            <source src={item.video} type="video/mp4" />
+                          </video>
+                        </Box>
+                      ) : (
+                        <Box
+                          component="img"
+                          src={item.image}
+                          alt={`Featured Product ${item.id}`}
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            padding: '5%',
+                          }}
+                        />
+                      )}
                     </Box>
                     <CardContent sx={{ p: 3 }}>
                       <Typography
@@ -459,7 +586,7 @@ const HomePage: React.FC = () => {
                           color: theme.palette.text.primary,
                         }}
                       >
-                        Emerald Lot #{i}
+                        Emerald Lot #{item.id}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -482,7 +609,7 @@ const HomePage: React.FC = () => {
                           letterSpacing: '0.02em',
                         }}
                       >
-                        {formatPrice(i * 1000000)}
+                        {formatPrice(item.id * 1000000)}
                       </Typography>
                     </CardContent>
                   </Card>

@@ -1,31 +1,40 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import Header from './Header';
 import Footer from './Footer';
-import ScrollToTop from '../ui/ScrollToTop';
-import CartDrawer from '../cart/CartDrawer';
-import OnboardingWizard from '../onboarding/OnboardingWizard';
-import HomeTutorial from '../tutorial/HomeTutorial';
+import PageTransition from '../common/PageTransition';
 
-const Layout: React.FC = () => {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <ScrollToTop />
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        bgcolor: 'background.default'
+      }}
+    >
       <Header />
-      <Box 
-        component="main" 
-        sx={{ 
+      <Box
+        component="main"
+        sx={{
           flexGrow: 1,
-          pt: { xs: 8, sm: 10 }, // Adjust for header height
+          display: 'flex',
+          flexDirection: 'column',
+          py: { xs: 3, sm: 4, md: 6 }
         }}
       >
-        <Outlet />
+        <Container maxWidth="xl">
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </Container>
       </Box>
-      <CartDrawer />
       <Footer />
-      <OnboardingWizard />
-      <HomeTutorial />
     </Box>
   );
 };

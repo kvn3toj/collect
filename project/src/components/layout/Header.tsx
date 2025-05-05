@@ -19,32 +19,50 @@ import {
   useMediaQuery,
   Avatar,
   Fade,
-  alpha
+  alpha,
+  Tooltip
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { ShoppingBag, User, Menu as MenuIcon, Heart, Search, X } from 'lucide-react';
+import { ShoppingBag, User, Menu as MenuIcon, Heart, Search, X, ShoppingCart } from 'lucide-react';
 import useAuthStore from '../../stores/authStore';
 import useCartStore from '../../stores/cartStore';
 import SearchBar from '../ui/SearchBar';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import logoLight from '/images/LOGO/logo-aretrust-light.png';
 import logoDark from '/images/LOGO/logo-aretrust-dark.png';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import cartService from '../../services/cartService';
 
 const Header: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   
   const { isAuthenticated, user, logout } = useAuthStore();
-  const { items, openCart, getTotalItems } = useCartStore();
+  const { items: localCartItems, getTotalItems, openCart } = useCartStore();
   
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   
-  const cartItemCount = getTotalItems();
+  // Usar React Query para obtener el carrito actual
+  const { data: serverCartItems = [] } = useQuery({
+    queryKey: ['cart'],
+    queryFn: cartService.getCart,
+    // No limitamos a autenticados para permitir carrito anónimo
+    refetchOnWindowFocus: true,
+    // Menor tiempo de invalidación para mantener carrito sincronizado
+    staleTime: 30000, // 30 segundos
+  });
+  
+  // Calcular el número de items en el carrito, priorizando el servidor
+  const cartItemCount = serverCartItems.length > 0 
+    ? serverCartItems.reduce((total, item) => total + item.quantity, 0)
+    : getTotalItems();
+    
   const userMenuOpen = Boolean(userMenuAnchor);
 
   // Verificamos si el usuario tiene permisos de administrador
@@ -59,7 +77,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
     
     window.addEventListener('scroll', handleScroll);
@@ -77,590 +95,445 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     logout();
     handleUserMenuClose();
+    // Invalidar consulta de carrito al cerrar sesión
+    queryClient.invalidateQueries({ queryKey: ['cart'] });
     navigate('/');
   };
 
-  const handleMobileMenuToggle = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
+  const handleDrawerToggle = () => {
+    setIsDrawerOpen(!isDrawerOpen);
   };
 
   const handleSearchToggle = () => {
     setSearchOpen(!searchOpen);
   };
 
-  // Colors with WCAG AA compliance
-  const textColor = isScrolled ? '#212121' : '#FFFFFF';
-  const hoverColor = isScrolled ? theme.palette.warning.main : '#E1C16E';
-  const iconBgHover = isScrolled ? alpha(theme.palette.primary.main, 0.08) : 'rgba(255,255,255,0.12)';
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setIsDrawerOpen(false);
+  };
 
-  return (
-    <AppBar 
-      position="fixed" 
-      color="transparent" 
+  const handleCartClick = () => {
+    navigate('/cart');
+  };
+
+  const navItems = [
+    { label: 'Colección', path: '/products' },
+    { label: 'Mi Atelier', path: '/atelier', requiresAuth: true },
+    { label: 'Sobre Nosotros', path: '/about' }
+  ];
+
+  const renderNavItems = () => (
+    <>
+      {navItems.map((item) => {
+        if (item.requiresAuth && !isAuthenticated) return null;
+        const isActive = isPathActive(item.path);
+        return (
+          <Button
+            key={item.path}
+            onClick={() => handleNavigation(item.path)}
+            sx={{
+              color: isScrolled ? 'text.primary' : 'white',
+              mx: 1,
+              fontFamily: 'Lato',
+              fontWeight: 500,
+              position: 'relative',
+              '&:hover': {
+                bgcolor: 'transparent',
+                color: 'gold.main'
+              },
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: '50%',
+                transform: isActive ? 'translateX(-50%) scaleX(1)' : 'translateX(-50%) scaleX(0)',
+                width: '100%',
+                height: '2px',
+                bgcolor: 'gold.main',
+                transition: 'transform 0.3s ease-in-out',
+                transformOrigin: 'center'
+              },
+              '&:hover::after': {
+                transform: 'translateX(-50%) scaleX(1)'
+              }
+            }}
+          >
+            {item.label}
+          </Button>
+        );
+      })}
+    </>
+  );
+
+  const drawer = (
+    <Box
       sx={{
-        backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'transparent',
-        boxShadow: isScrolled ? '0px 2px 10px rgba(0, 0, 0, 0.05)' : 'none',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        borderBottom: isScrolled ? '1px solid rgba(0, 0, 0, 0.08)' : 'none',
-        backdropFilter: isScrolled ? 'blur(8px)' : 'none',
-        '&:before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: isScrolled ? 'none' : 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%)',
-          pointerEvents: 'none',
-          transition: 'opacity 0.3s ease',
-          opacity: isScrolled ? 0 : 1,
-        }
+        width: 280,
+        bgcolor: 'background.paper',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
-      <Container maxWidth="xl">
-        <Toolbar 
-          sx={{ 
-            py: { xs: 1, md: 1.5 },
-            px: { xs: 1, md: 2 },
-            minHeight: { xs: 64, md: 72 },
-            position: 'relative',
-            zIndex: 1
-          }}
-        >
-          {/* Mobile Menu Toggle */}
-          {isMobile && (
-            <IconButton
-              color="inherit"
-              edge="start"
-              onClick={handleMobileMenuToggle}
-              sx={{ 
-                mr: 1, 
-                color: textColor,
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  backgroundColor: iconBgHover,
-                  color: hoverColor,
-                }
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-
-          {/* Logo */}
-          <Box
-            component={RouterLink}
-            to="/"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              flexGrow: isMobile ? 1 : 0,
-              textAlign: isMobile ? 'center' : 'left',
-              mr: 2,
-              minHeight: 40,
-            }}
-          >
-            <Box
-              component="img"
-              src={isScrolled ? logoDark : logoLight}
-              alt="ARETrust logo"
-              sx={{
-                height: { xs: 32, md: 40 },
-                width: 'auto',
-                transition: 'filter 0.3s',
-                filter: isScrolled ? 'none' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.18))',
-                display: 'block',
-                mx: isMobile ? 'auto' : 0,
-              }}
-            />
-          </Box>
-
-          {/* Desktop Navigation Links */}
-          {!isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', ml: 4 }}>
-              <Button
-                id="home-nav"
-                component={RouterLink}
-                to="/"
-                sx={{
-                  color: textColor,
-                  fontFamily: "'Lato', sans-serif",
-                  fontWeight: isScrolled ? 500 : 600,
-                  mx: 1,
-                  fontSize: '0.9rem',
-                  letterSpacing: '0.02em',
-                  position: 'relative',
-                  py: 1.5,
-                  textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                    color: hoverColor,
-                  },
-                  '&:after': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: 0,
-                    left: '50%',
-                    width: isPathActive('/') ? '100%' : '0%',
-                    height: 2,
-                    bgcolor: isPathActive('/') ? hoverColor : 'transparent',
-                    transition: 'all 0.3s ease',
-                    transform: 'translateX(-50%)',
-                  },
-                  '&:hover:after': {
-                    width: '70%',
-                    bgcolor: hoverColor,
-                  },
-                }}
-              >
-                Inicio
-              </Button>
-              
-              <Button
-                id="catalog-nav"
-                component={RouterLink}
-                to="/products"
-                sx={{
-                  color: textColor,
-                  fontFamily: "'Lato', sans-serif",
-                  fontWeight: isScrolled ? 500 : 600,
-                  mx: 1,
-                  fontSize: '0.9rem',
-                  letterSpacing: '0.02em',
-                  position: 'relative',
-                  py: 1.5,
-                  textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                    color: hoverColor,
-                  },
-                  '&:after': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: 0,
-                    left: '50%',
-                    width: isPathActive('/products') ? '100%' : '0%',
-                    height: 2,
-                    bgcolor: isPathActive('/products') ? hoverColor : 'transparent',
-                    transition: 'all 0.3s ease',
-                    transform: 'translateX(-50%)',
-                  },
-                  '&:hover:after': {
-                    width: '70%',
-                    bgcolor: hoverColor,
-                  },
-                }}
-              >
-                Colección
-              </Button>
-              
-              {/* Mostrar botón de Configurador solo para administradores */}
-              {isAdmin && (
-                <Button
-                  id="configurator-nav"
-                  component={RouterLink}
-                  to="/configurator"
-                  sx={{
-                    color: textColor,
-                    fontFamily: "'Lato', sans-serif",
-                    fontWeight: isScrolled ? 500 : 600,
-                    mx: 1,
-                    fontSize: '0.9rem',
-                    letterSpacing: '0.02em',
-                    position: 'relative',
-                    py: 1.5,
-                    textShadow: isScrolled ? 'none' : '0 1px 3px rgba(0,0,0,0.2)',
-                    '&:hover': {
-                      backgroundColor: 'transparent',
-                      color: hoverColor,
-                    },
-                    '&:after': {
-                      content: '""',
-                      position: 'absolute',
-                      bottom: 0,
-                      left: '50%',
-                      width: isPathActive('/configurator') ? '100%' : '0%',
-                      height: 2,
-                      bgcolor: isPathActive('/configurator') ? hoverColor : 'transparent',
-                      transition: 'all 0.3s ease',
-                      transform: 'translateX(-50%)',
-                    },
-                    '&:hover:after': {
-                      width: '70%',
-                      bgcolor: hoverColor,
-                    },
-                  }}
-                >
-                  Configurador
-                </Button>
-              )}
-            </Box>
-          )}
-
-          <Box sx={{ flexGrow: 1 }} />
-
-          {/* Search, Cart, and User Icons */}
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center',
-              gap: { xs: 1, md: 2 }
-            }}
-          >
-            <IconButton
-              onClick={handleSearchToggle}
-              sx={{
-                color: textColor,
-                transition: 'color 0.3s ease',
-                textShadow: isScrolled ? 'none' : '0 1px 2px rgba(0,0,0,0.15)',
-                '&:hover': {
-                  color: hoverColor,
-                  backgroundColor: iconBgHover,
-                }
-              }}
-            >
-              <Search size={20} />
-            </IconButton>
-
-            <Box sx={{ ml: 1 }}>
-              <IconButton
-                id="cart-nav"
-                aria-label="shopping cart"
-                onClick={openCart}
-                sx={{
-                  color: textColor,
-                  position: 'relative',
-                  transition: 'all 0.2s ease',
-                  textShadow: isScrolled ? 'none' : '0 1px 2px rgba(0,0,0,0.15)',
-                  '&:hover': {
-                    backgroundColor: iconBgHover,
-                    color: hoverColor,
-                  },
-                }}
-              >
-                <ShoppingBag size={20} />
-                {cartItemCount > 0 && (
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: -2,
-                      right: -2,
-                      backgroundColor: theme.palette.secondary.main,
-                      color: theme.palette.secondary.contrastText,
-                      width: 18,
-                      height: 18,
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.7rem',
-                      fontWeight: 'bold',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                    }}
-                  >
-                    {cartItemCount}
-                  </Box>
-                )}
-              </IconButton>
-            </Box>
-
-            {isAuthenticated ? (
-              <>
-                <IconButton
-                  onClick={handleUserMenuOpen}
-                  sx={{
-                    color: textColor,
-                    transition: 'color 0.3s ease',
-                    textShadow: isScrolled ? 'none' : '0 1px 2px rgba(0,0,0,0.15)',
-                    '&:hover': {
-                      backgroundColor: iconBgHover,
-                      color: hoverColor,
-                    }
-                  }}
-                >
-                  <Avatar 
-                    src={user?.avatar}
-                    alt={user?.firstName}
-                    sx={{ 
-                      width: 28, 
-                      height: 28,
-                      border: `2px solid ${isScrolled ? theme.palette.primary.main : '#FFFFFF'}`,
-                      transition: 'border-color 0.3s ease',
-                      boxShadow: isScrolled ? 'none' : '0 2px 4px rgba(0,0,0,0.2)',
-                    }}
-                  />
-                </IconButton>
-                <Menu
-                  anchorEl={userMenuAnchor}
-                  open={userMenuOpen}
-                  onClose={handleUserMenuClose}
-                  TransitionComponent={Fade}
-                  PaperProps={{
-                    sx: {
-                      mt: 1.5,
-                      borderRadius: 0,
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
-                      minWidth: 200,
-                    }
-                  }}
-                >
-                  <MenuItem 
-                    component={RouterLink} 
-                    to="/account"
-                    onClick={handleUserMenuClose}
-                    sx={{
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '0.9rem',
-                      py: 1.5,
-                      color: '#212121',
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                      }
-                    }}
-                  >
-                    My Account
-                  </MenuItem>
-                  <MenuItem 
-                    component={RouterLink} 
-                    to="/account/orders"
-                    onClick={handleUserMenuClose}
-                    sx={{
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '0.9rem',
-                      py: 1.5,
-                      color: '#212121',
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                      }
-                    }}
-                  >
-                    Orders
-                  </MenuItem>
-                  <MenuItem 
-                    component={RouterLink} 
-                    to="/account/wishlist"
-                    onClick={handleUserMenuClose}
-                    sx={{
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '0.9rem',
-                      py: 1.5,
-                      color: '#212121',
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                      }
-                    }}
-                  >
-                    Wishlist
-                  </MenuItem>
-                  <Divider />
-                  <MenuItem 
-                    onClick={handleLogout}
-                    sx={{
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '0.9rem',
-                      py: 1.5,
-                      color: theme.palette.error.main,
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.error.main, 0.08),
-                      }
-                    }}
-                  >
-                    Logout
-                  </MenuItem>
-                </Menu>
-              </>
-            ) : (
-              <Button
-                component={RouterLink}
-                to="/login"
-                variant={isScrolled ? "outlined" : "contained"}
-                color={isScrolled ? "primary" : "secondary"}
-                sx={{
-                  ml: { xs: 0, md: 1 },
-                  px: { xs: 2, md: 3 },
-                  py: { xs: 0.75, md: 1 },
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.02em',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                  }
-                }}
-              >
-                Login
-              </Button>
-            )}
-          </Box>
-        </Toolbar>
-      </Container>
-
-      {/* Search Bar */}
-      <Fade in={searchOpen}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: 'white',
-            borderBottom: '1px solid rgba(0, 0, 0, 0.08)',
-            zIndex: 1,
-          }}
-        >
-          <Container maxWidth="xl">
-            <Box sx={{ py: 2 }}>
-              <SearchBar onClose={() => setSearchOpen(false)} />
-            </Box>
-          </Container>
-        </Box>
-      </Fade>
-
-      {/* Mobile Menu */}
-      <Drawer
-        anchor="left"
-        open={mobileMenuOpen}
-        onClose={handleMobileMenuToggle}
+      <Box
         sx={{
-          '& .MuiDrawer-paper': {
-            width: '80%',
-            maxWidth: 300,
-            backgroundColor: 'white',
-          },
+          p: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid',
+          borderColor: 'divider'
         }}
       >
-        <Box
-          sx={{
-            p: 2,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 700,
-              color: theme.palette.primary.main,
-            }}
-          >
-            ARETrust
-          </Typography>
-          <IconButton 
-            onClick={handleMobileMenuToggle}
-            sx={{
-              color: theme.palette.text.primary,
-              '&:hover': {
-                backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              }
-            }}
-          >
-            <X size={24} />
-          </IconButton>
-        </Box>
-        <Divider />
-        <List>
-          <ListItem 
-            button 
-            component={RouterLink} 
-            to="/"
-            onClick={handleMobileMenuToggle}
-            sx={{
-              py: 1.5,
-              '&:hover': {
-                backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              }
-            }}
-          >
-            <ListItemText 
-              primary="Inicio" 
-              primaryTypographyProps={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.95rem',
-                fontWeight: 500,
-                color: '#212121',
-              }}
-            />
-          </ListItem>
-          
-          <ListItem 
-            button 
-            component={RouterLink} 
-            to="/products"
-            onClick={handleMobileMenuToggle}
-            sx={{
-              py: 1.5,
-              '&:hover': {
-                backgroundColor: alpha(theme.palette.primary.main, 0.08),
-              }
-            }}
-          >
-            <ListItemText 
-              primary="Colección" 
-              primaryTypographyProps={{
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.95rem',
-                fontWeight: 500,
-                color: '#212121',
-              }}
-            />
-          </ListItem>
-          
-          {/* Mostrar enlace de Configurador en móvil solo para administradores */}
-          {isAdmin && (
-            <ListItem 
-              button 
-              component={RouterLink} 
-              to="/configurator"
-              onClick={handleMobileMenuToggle}
+        <img
+          src={logoDark}
+          alt="ARETrust"
+          style={{ height: 32 }}
+        />
+        <IconButton onClick={handleDrawerToggle}>
+          <X size={20} />
+        </IconButton>
+      </Box>
+      <List sx={{ flexGrow: 1 }}>
+        {navItems.map((item) => {
+          if (item.requiresAuth && !isAuthenticated) return null;
+          const isActive = isPathActive(item.path);
+          return (
+            <ListItem
+              button
+              key={item.path}
+              onClick={() => handleNavigation(item.path)}
               sx={{
-                py: 1.5,
+                py: 2,
+                bgcolor: isActive ? 'action.selected' : 'transparent',
                 '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                  bgcolor: 'action.hover'
                 }
               }}
             >
-              <ListItemText 
-                primary="Configurador" 
+              <ListItemText
+                primary={item.label}
                 primaryTypographyProps={{
-                  fontFamily: "'Lato', sans-serif",
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  color: '#212121',
+                  fontFamily: 'Lato',
+                  fontWeight: isActive ? 600 : 500,
+                  color: isActive ? 'gold.main' : 'text.primary'
                 }}
               />
             </ListItem>
-          )}
-        </List>
-        <Divider />
-        <Box sx={{ p: 2 }}>
-          {!isAuthenticated && (
-            <Button
-              component={RouterLink}
-              to="/login"
-              variant="contained"
+          );
+        })}
+        <ListItem
+          button
+          onClick={() => handleNavigation('/cart')}
+          sx={{
+            py: 2,
+            bgcolor: isPathActive('/cart') ? 'action.selected' : 'transparent',
+            '&:hover': {
+              bgcolor: 'action.hover'
+            }
+          }}
+        >
+          <ListItemText
+            primary="Carrito"
+            primaryTypographyProps={{
+              fontFamily: 'Lato',
+              fontWeight: isPathActive('/cart') ? 600 : 500,
+              color: isPathActive('/cart') ? 'gold.main' : 'text.primary'
+            }}
+          />
+          {cartItemCount > 0 && (
+            <Badge 
+              badgeContent={cartItemCount} 
               color="primary"
-              fullWidth
+              sx={{ ml: 1 }}
+            />
+          )}
+        </ListItem>
+      </List>
+      <Divider />
+      <List>
+        <ListItem
+          button
+          onClick={() => handleNavigation(isAuthenticated ? '/account' : '/login')}
+          sx={{
+            py: 2,
+            '&:hover': {
+              bgcolor: 'action.hover'
+            }
+          }}
+        >
+          <ListItemText
+            primary={isAuthenticated ? 'Mi Cuenta' : 'Iniciar Sesión'}
+            primaryTypographyProps={{
+              fontFamily: 'Lato',
+              fontWeight: 500
+            }}
+          />
+        </ListItem>
+      </List>
+    </Box>
+  );
+
+  return (
+    <>
+      <AppBar
+        position="fixed"
+        elevation={0}
+        sx={{
+          bgcolor: isScrolled ? 'background.paper' : 'transparent',
+          transition: 'all 0.3s ease-in-out',
+          borderBottom: isScrolled ? '1px solid' : 'none',
+          borderColor: 'divider'
+        }}
+      >
+        <Container maxWidth="lg">
+          <Toolbar
+            disableGutters
+            sx={{
+              minHeight: { xs: 64, sm: 80 },
+              justifyContent: 'space-between'
+            }}
+          >
+            {/* Logo */}
+            <Box
+              onClick={() => handleNavigation('/')}
               sx={{
-                py: 1.5,
-                fontFamily: "'Lato', sans-serif",
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                letterSpacing: '0.02em',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-1px)',
-                }
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center'
               }}
             >
-              Login
-            </Button>
-          )}
-        </Box>
+              <img
+                src={isScrolled ? logoDark : logoLight}
+                alt="ARETrust"
+                style={{ height: isMobile ? 28 : 40 }}
+              />
+            </Box>
+
+            {/* Navigation for desktop */}
+            {!isMobile && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexGrow: 1
+                }}
+              >
+                {renderNavItems()}
+              </Box>
+            )}
+
+            {/* Right menu icons */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <Tooltip title="Buscar">
+                <IconButton
+                  onClick={handleSearchToggle}
+                  sx={{
+                    color: isScrolled ? 'text.primary' : 'white',
+                    '&:hover': {
+                      color: 'gold.main'
+                    }
+                  }}
+                >
+                  <Search size={20} />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Carrito">
+                <IconButton
+                  onClick={handleCartClick}
+                  sx={{
+                    color: isScrolled ? 'text.primary' : 'white',
+                    '&:hover': {
+                      color: 'gold.main'
+                    },
+                    mx: 1
+                  }}
+                >
+                  <Badge 
+                    badgeContent={cartItemCount} 
+                    color="primary"
+                    overlap="circular"
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                  >
+                    <ShoppingCart size={20} />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+
+              {isAuthenticated ? (
+                <>
+                  <IconButton
+                    onClick={handleUserMenuOpen}
+                    sx={{
+                      color: isScrolled ? 'text.primary' : 'white',
+                      '&:hover': {
+                        color: 'gold.main'
+                      }
+                    }}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 30,
+                        height: 30,
+                        bgcolor: 'gold.main',
+                        color: 'common.black',
+                        fontSize: '0.875rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      {user?.firstName ? user.firstName.charAt(0) : user?.email?.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </IconButton>
+
+                  <Menu
+                    anchorEl={userMenuAnchor}
+                    open={userMenuOpen}
+                    onClose={handleUserMenuClose}
+                    TransitionComponent={Fade}
+                    sx={{
+                      mt: 1.5,
+                      '& .MuiPaper-root': {
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+                      }
+                    }}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        handleUserMenuClose();
+                        navigate('/account');
+                      }}
+                    >
+                      Mi cuenta
+                    </MenuItem>
+                    {isAdmin && (
+                      <MenuItem
+                        onClick={() => {
+                          handleUserMenuClose();
+                          navigate('/admin');
+                        }}
+                      >
+                        Administración
+                      </MenuItem>
+                    )}
+                    <MenuItem
+                      onClick={() => {
+                        handleUserMenuClose();
+                        navigate('/account/orders');
+                      }}
+                    >
+                      Mis pedidos
+                    </MenuItem>
+                    <Divider />
+                    <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Button
+                  onClick={() => navigate('/login')}
+                  startIcon={<User size={18} />}
+                  variant="outlined"
+                  sx={{
+                    ml: 1,
+                    color: isScrolled ? 'text.primary' : 'white',
+                    borderColor: isScrolled ? 'text.primary' : 'white',
+                    '&:hover': {
+                      borderColor: 'gold.main',
+                      color: 'gold.main',
+                      bgcolor: 'transparent'
+                    }
+                  }}
+                >
+                  Acceder
+                </Button>
+              )}
+
+              {isMobile && (
+                <IconButton
+                  onClick={handleDrawerToggle}
+                  sx={{
+                    ml: 1,
+                    color: isScrolled ? 'text.primary' : 'white',
+                    '&:hover': {
+                      color: 'gold.main'
+                    }
+                  }}
+                >
+                  <MenuIcon size={24} />
+                </IconButton>
+              )}
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      {/* Search bar overlay */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              padding: '20px',
+              zIndex: 1300,
+              backgroundColor: theme.palette.background.paper,
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)'
+            }}
+          >
+            <Container maxWidth="lg">
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2
+                }}
+              >
+                <SearchBar fullWidth />
+                <IconButton onClick={handleSearchToggle}>
+                  <X size={20} />
+                </IconButton>
+              </Box>
+            </Container>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile drawer */}
+      <Drawer
+        anchor="right"
+        open={isDrawerOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true
+        }}
+      >
+        {drawer}
       </Drawer>
-    </AppBar>
+
+      {/* Toolbar spacer */}
+      <Toolbar
+        sx={{
+          minHeight: { xs: 64, sm: 80 }
+        }}
+      />
+    </>
   );
 };
 

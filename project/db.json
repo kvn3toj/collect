@@ -1,4 +1,22 @@
 {
+  "auth_login": [
+    {
+      "id": 1,
+      "email": "admin@aretrust.co",
+      "password": "password123",
+      "role": "admin",
+      "firstName": "Admin",
+      "lastName": "User"
+    },
+    {
+      "id": 2,
+      "email": "user@test.com",
+      "password": "password123",
+      "role": "user",
+      "firstName": "Test",
+      "lastName": "User"
+    }
+  ],
   "products": [
     {
       "id": "lote-001",

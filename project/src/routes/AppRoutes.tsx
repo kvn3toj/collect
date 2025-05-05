@@ -1,146 +1,184 @@
-import React, { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import PrivateRoute from './PrivateRoute';
-import AdminRoute from './AdminRoute';
-import Layout from '../components/layout/Layout';
-import LoadingScreen from '../components/ui/LoadingScreen';
+import PageTransition from '../components/common/PageTransition';
 
-// Lazy loaded pages
-const HomePage = lazy(() => import('../pages/HomePage'));
-const ProductsPage = lazy(() => import('../pages/ProductsPage'));
-const ProductDetailPage = lazy(() => import('../pages/ProductDetailPage'));
-const CustomizerPage = lazy(() => import('../pages/CustomizerPage'));
-const CartPage = lazy(() => import('../pages/CartPage'));
-const CheckoutPage = lazy(() => import('../pages/CheckoutPage'));
-const LoginPage = lazy(() => import('../pages/auth/LoginPage'));
-const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
-const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPasswordPage'));
-const AccountPage = lazy(() => import('../pages/account/AccountPage'));
-const OrdersPage = lazy(() => import('../pages/account/OrdersPage'));
-const OrderDetailPage = lazy(() => import('../pages/account/OrderDetailPage'));
-const AddressesPage = lazy(() => import('../pages/account/AddressesPage'));
-const WishlistPage = lazy(() => import('../pages/account/WishlistPage'));
-const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
-const AdminProductsPage = lazy(() => import('../pages/admin/AdminProductsPage'));
-const AdminOrdersPage = lazy(() => import('../pages/admin/AdminOrdersPage'));
-const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
-const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
-const ShowcasePage = lazy(() => import('../pages/ShowcasePage'));
+// Pages
+import HomePage from '../pages/HomePage';
+import ProductsPage from '../pages/ProductsPage';
+import ProductDetailPage from '../pages/ProductDetailPage';
+import AtelierPage from '../pages/AtelierPage';
+import CustomizerPage from '../pages/CustomizerPage';
+import AboutPage from '../pages/AboutPage';
+import ContactPage from '../pages/ContactPage';
+import LoginPage from '../pages/auth/LoginPage';
+import RegisterPage from '../pages/auth/RegisterPage';
+import AccountPage from '../pages/account/AccountPage';
+import NotFoundPage from '../pages/NotFoundPage';
+import { CraftsmanshipShowcase } from '../components/premium/CraftsmanshipShowcase';
+import { CareProgram } from '../components/premium/CareProgram';
+import CartPage from '../pages/CartPage';
+import CheckoutPage from '../pages/CheckoutPage';
+import OrderCompletePage from '../pages/OrderCompletePage';
 
-// Ruta de ejemplo para los tutoriales
-const MicroTutorialExample = lazy(() => import('../components/tutorial/MicroTutorialExample'));
+const AppRoutes: React.FC = () => {
+  const location = useLocation();
 
-const AppRoutes = () => {
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="products/:id" element={<ProductDetailPage />} />
-          <Route path="customize/:id" element={<CustomizerPage />} />
-          <Route path="cart" element={<CartPage />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
-          <Route path="forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="showcase" element={<ShowcasePage />} />
-          <Route path="tutorial-example" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <MicroTutorialExample />
-            </Suspense>
-          } />
-          <Route path="404" element={<NotFoundPage />} />
-          
-          {/* Protected customer routes */}
-          <Route 
-            path="checkout" 
-            element={
-              <PrivateRoute>
-                <CheckoutPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="account" 
-            element={
-              <PrivateRoute>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public Routes */}
+        <Route
+          path="/"
+          element={
+            <PageTransition>
+              <HomePage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <PageTransition>
+              <ProductsPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/products/:id"
+          element={
+            <PageTransition>
+              <ProductDetailPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <PageTransition>
+              <AboutPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <PageTransition>
+              <ContactPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PageTransition>
+              <LoginPage />
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PageTransition>
+              <RegisterPage />
+            </PageTransition>
+          }
+        />
+        
+        {/* Cart Route */}
+        <Route
+          path="/cart"
+          element={
+            <PageTransition>
+              <CartPage />
+            </PageTransition>
+          }
+        />
+        
+        {/* Premium Feature Routes */}
+        <Route
+          path="/craftsmanship"
+          element={
+            <PageTransition>
+              <CraftsmanshipShowcase />
+            </PageTransition>
+          }
+        />
+
+        {/* Protected Routes */}
+        <Route
+          path="/atelier"
+          element={
+            <PrivateRoute>
+              <PageTransition>
+                <AtelierPage />
+              </PageTransition>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/customizer"
+          element={
+            <PrivateRoute>
+              <PageTransition>
+                <CustomizerPage />
+              </PageTransition>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <PrivateRoute>
+              <PageTransition>
                 <AccountPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="account/orders" 
-            element={
-              <PrivateRoute>
-                <OrdersPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="account/orders/:id" 
-            element={
-              <PrivateRoute>
-                <OrderDetailPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="account/addresses" 
-            element={
-              <PrivateRoute>
-                <AddressesPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="account/wishlist" 
-            element={
-              <PrivateRoute>
-                <WishlistPage />
-              </PrivateRoute>
-            } 
-          />
-          
-          {/* Admin routes */}
-          <Route 
-            path="admin" 
-            element={
-              <AdminRoute>
-                <AdminDashboardPage />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="admin/products" 
-            element={
-              <AdminRoute>
-                <AdminProductsPage />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="admin/orders" 
-            element={
-              <AdminRoute>
-                <AdminOrdersPage />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="admin/users" 
-            element={
-              <AdminRoute>
-                <AdminUsersPage />
-              </AdminRoute>
-            } 
-          />
-          
-          {/* Catch all route */}
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Route>
+              </PageTransition>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/care-program"
+          element={
+            <PrivateRoute>
+              <PageTransition>
+                <CareProgram />
+              </PageTransition>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <PrivateRoute>
+              <PageTransition>
+                <CheckoutPage />
+              </PageTransition>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/order-complete"
+          element={
+            <PrivateRoute>
+              <PageTransition>
+                <OrderCompletePage />
+              </PageTransition>
+            </PrivateRoute>
+          }
+        />
+
+        {/* 404 Route */}
+        <Route
+          path="*"
+          element={
+            <PageTransition>
+              <NotFoundPage />
+            </PageTransition>
+          }
+        />
       </Routes>
-    </Suspense>
+    </AnimatePresence>
   );
 };
 

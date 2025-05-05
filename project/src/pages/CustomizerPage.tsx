@@ -1,325 +1,417 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { 
   Box, 
   Container, 
-  Grid, 
   Typography, 
   Button, 
-  Divider,
   CircularProgress,
-  Alert,
-  Paper,
-  Tabs,
-  Tab,
-  TextField
+  useTheme,
+  useMediaQuery,
+  IconButton,
+  Fade,
+  Slide,
+  Modal,
 } from '@mui/material';
-import { ArrowLeft, Save, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Save, ShoppingCart, Eye, Settings, Diamond, MessageSquare, Award } from 'lucide-react';
 import ConfiguratorTutorial from '../components/tutorial/ConfiguratorTutorial';
+import JewelryTypeSelector from '../components/customizer/JewelryTypeSelector';
+import MetalSelector from '../components/customizer/MetalSelector';
+import EmeraldSelector from '../components/customizer/EmeraldSelector';
+import SettingSelector from '../components/customizer/SettingSelector';
+import EngravingSelector from '../components/customizer/EngravingSelector';
+import QuoteRequestModal from '../components/customizer/QuoteRequestModal';
+import { useQuery } from '@tanstack/react-query';
+import { useConfiguratorStore } from '../stores/configuratorStore';
+import { ConfiguratorControls } from '../components/configurator/ConfiguratorControls';
+import { ConfiguratorViewer } from '../components/configurator/ConfiguratorViewer';
+import { ConfiguratorProgress } from '../components/configurator/ConfiguratorProgress';
+import { ConfiguratorPrice } from '../components/configurator/ConfiguratorPrice';
+import { api } from '../services/api';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ConfiguratorReview } from '../components/configurator/steps/ConfiguratorReview';
+import { CertificationViewer } from '../components/premium/CertificationViewer';
 
-// Simulamos la función de servicio para obtener un producto personalizable
-const getCustomizableProduct = async (id: string) => {
-  // Para despliegue visual estático, simularemos un retraso y luego un error
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  // En versión de despliegue, forzamos un "error" de carga para mostrar mensaje
-  return Promise.reject(new Error("Personalizador no disponible temporalmente"));
-  
-  /* DATOS SIMULADOS - COMENTADOS PARA DESPLIEGUE VISUAL ESTÁTICO
-  return {
-    id,
-    name: 'Customizable Product ' + id,
-    price: 149.99,
-    description: 'This product can be fully customized to your preferences.',
-    images: ['/sample-customizable.jpg'],
-    customizationOptions: {
-      colors: ['Red', 'Blue', 'Green', 'Black', 'White'],
-      materials: ['Cotton', 'Leather', 'Synthetic', 'Wool'],
-      engraving: true,
-      sizing: {
-        min: 5,
-        max: 15,
-        step: 0.5
-      }
-    }
-  };
-  */
-};
+// Define the steps in the configurator flow
+const CONFIGURATOR_STEPS = [
+  { id: 'select-type', label: 'Tipo de Joya' },
+  { id: 'select-metal', label: 'Metal' },
+  { id: 'select-emerald', label: 'Esmeralda' },
+  { id: 'select-setting', label: 'Engaste' },
+  { id: 'select-engraving', label: 'Grabado' },
+  { id: 'review', label: 'Revisión' },
+] as const;
+
+type ConfiguratorStep = typeof CONFIGURATOR_STEPS[number]['id'];
 
 const CustomizerPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(0);
-  const [customizations, setCustomizations] = useState({
-    color: '',
-    material: '',
-    engravingText: '',
-    size: 10
-  });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { currentStep, setError, config, setLoading } = useConfiguratorStore();
+  
+  const [is3DViewActive, setIs3DViewActive] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [showControls, setShowControls] = useState(!isMobile);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [selectedEmeraldId, setSelectedEmeraldId] = useState<string | null>(null);
+  const [selectedEmeraldName, setSelectedEmeraldName] = useState<string | null>(null);
 
-  const { data: product, isLoading, isError, error } = useQuery({
-    queryKey: ['customizable-product', id],
-    queryFn: () => getCustomizableProduct(id || ''),
-    enabled: !!id,
-    onSuccess: (data) => {
-      // Initialize with default values
-      if (data && data.customizationOptions) {
-        setCustomizations({
-          ...customizations,
-          color: data.customizationOptions.colors?.[0] || '',
-          material: data.customizationOptions.materials?.[0] || '',
-        });
-      }
+  // Fetch configurator options
+  const { data: options, isLoading: optionsLoading, error } = useQuery({
+    queryKey: ['configuratorOptions'],
+    queryFn: async () => {
+      const response = await api.get('/api/configurator/options');
+      return response.data;
     },
-    // Desactivar refetch para evitar llamadas infinitas en el entorno de despliegue
-    retry: false,
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false
   });
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
+  useEffect(() => {
+    if (error) {
+      setError('Error al cargar las opciones del configurador');
+    }
+  }, [error, setError]);
 
-  const handleCustomizationChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomizations({
-      ...customizations,
-      [field]: event.target.value
-    });
-  };
+  // Simulación de carga de datos
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const handleSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(event.target.value);
-    if (product && !isNaN(value)) {
-      const { min, max } = product.customizationOptions.sizing;
-      if (value >= min && value <= max) {
-        setCustomizations({
-          ...customizations,
-          size: value
-        });
-      }
+  const handleSaveToAtelier = async () => {
+    setLoading(true);
+    try {
+      // TODO: Implement save to atelier logic
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated delay
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSaveCustomization = () => {
-    // In a real app, this would save the customization to the server
-    console.log('Saving customization:', customizations);
+  // Handle step navigation
+  const handleNext = () => {
+    const currentIndex = CONFIGURATOR_STEPS.findIndex(step => step.id === currentStep);
+    if (currentIndex < CONFIGURATOR_STEPS.length - 1) {
+      setCurrentStep(CONFIGURATOR_STEPS[currentIndex + 1].id);
+    }
   };
 
-  const handleAddToCart = () => {
-    // In a real app, this would add the customized product to the cart
-    console.log('Adding to cart:', { product, customizations });
+  const handleBack = () => {
+    const currentIndex = CONFIGURATOR_STEPS.findIndex(step => step.id === currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(CONFIGURATOR_STEPS[currentIndex - 1].id);
+    }
+  };
+
+  // Function to open certificate viewer
+  const handleOpenCertificate = (emeraldId: string, emeraldName: string) => {
+    setSelectedEmeraldId(emeraldId);
+    setSelectedEmeraldName(emeraldName);
+    setShowCertificate(true);
+  };
+
+  // Function to close certificate viewer
+  const handleCloseCertificate = () => {
+    setShowCertificate(false);
+  };
+
+  // Render current step component
+  const renderCurrentStep = () => {
+    const stepProps = {
+      onNext: handleNext,
+      onBack: handleBack,
+    };
+
+    switch (currentStep) {
+      case 'select-type':
+        return <JewelryTypeSelector {...stepProps} />;
+      case 'select-metal':
+        return <MetalSelector {...stepProps} />;
+      case 'select-emerald':
+        return (
+          <EmeraldSelector 
+            {...stepProps} 
+            onViewCertificate={handleOpenCertificate} 
+          />
+        );
+      case 'select-setting':
+        return <SettingSelector {...stepProps} />;
+      case 'select-engraving':
+        return <EngravingSelector {...stepProps} />;
+      case 'review':
+        return (
+          <ConfiguratorReview
+            {...stepProps}
+            onRequestQuote={() => setShowQuoteModal(true)}
+            onSaveToAtelier={handleSaveToAtelier}
+            onViewCertificate={handleOpenCertificate}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   if (isLoading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
-        <CircularProgress />
-        <Typography sx={{ mt: 2 }}>Loading customizer...</Typography>
-      </Container>
-    );
-  }
-
-  if (isError || !product) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="info" sx={{ mb: 3 }}>
-          El personalizador de productos está temporalmente no disponible. Estamos trabajando para habilitarlo pronto.
-        </Alert>
-        <Typography variant="body1" sx={{ mb: 3 }}>
-          Por favor, visite nuestra colección de productos estándar o contáctenos para solicitudes personalizadas.
+      <Container maxWidth="xl" sx={{ 
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <CircularProgress 
+          size={60} 
+          thickness={4}
+          sx={{
+            color: theme.palette.primary.main,
+            opacity: 0.8,
+          }}
+        />
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            mt: 2, 
+            color: 'text.secondary',
+            fontWeight: 300,
+            letterSpacing: 1,
+          }}>
+          Inicializando el configurador de joyas...
         </Typography>
-        <Button startIcon={<ArrowLeft />} onClick={() => navigate('/products')} sx={{ mt: 2 }}>
-          Ver Productos
-        </Button>
       </Container>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4, position: 'relative' }}>
-      {/* Integramos el tutorial del configurador */}
+    <Box
+      component={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      sx={{
+        minHeight: '100vh',
+        bgcolor: 'background.default',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <Container
+        maxWidth={false}
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          p: { xs: 0, md: 2 },
+        }}
+      >
+        {/* Progress Indicator */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+            px: { xs: 2, md: 4 },
+            py: 2,
+            bgcolor: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          <ConfiguratorProgress steps={CONFIGURATOR_STEPS} currentStep={currentStep} />
+        </Box>
+
+        {/* Main Content Area */}
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            mt: { xs: 8, md: 10 },
+            position: 'relative',
+          }}
+        >
+          {/* 3D Viewer */}
+          <Box
+            sx={{
+              flex: 1,
+              position: 'relative',
+              height: { xs: '50vh', md: 'auto' },
+              minHeight: { xs: '50vh', md: 'calc(100vh - 200px)' },
+              bgcolor: 'background.paper',
+              borderRadius: { xs: 0, md: 2 },
+              overflow: 'hidden',
+              boxShadow: { xs: 'none', md: '0 4px 20px rgba(0,0,0,0.05)' },
+            }}
+          >
+            <ConfiguratorViewer />
+          </Box>
+
+          {/* Controls Panel */}
+          <AnimatePresence>
+            {showControls && (
+              <motion.div
+                initial={{ x: 400, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 400, opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              >
+                <Box
+                  sx={{
+                    width: { xs: '100%', md: '400px' },
+                    height: { xs: '50vh', md: 'auto' },
+                    position: { xs: 'relative', md: 'sticky' },
+                    top: { md: 80 },
+                    bgcolor: 'background.paper',
+                    borderLeft: { md: 1 },
+                    borderColor: { md: 'divider' },
+                    overflow: 'auto',
+                    boxShadow: { xs: 'none', md: '-4px 0 20px rgba(0,0,0,0.05)' },
+                  }}
+                >
+                  <ConfiguratorControls options={options} isLoading={optionsLoading} />
+                </Box>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Box>
+
+        {/* Price Display */}
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+            bgcolor: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(8px)',
+            borderTop: 1,
+            borderColor: 'divider',
+            p: 2,
+          }}
+        >
+          <ConfiguratorPrice />
+        </Box>
+
+        {/* Mobile Controls Toggle */}
+        {isMobile && (
+          <IconButton
+            onClick={() => setShowControls(!showControls)}
+            sx={{
+              position: 'fixed',
+              bottom: 80,
+              right: 16,
+              bgcolor: 'background.paper',
+              boxShadow: 2,
+              '&:hover': {
+                bgcolor: 'background.paper',
+              },
+            }}
+          >
+            <Settings />
+          </IconButton>
+        )}
+      </Container>
+
+      {/* Tutorial del configurador */}
       <ConfiguratorTutorial />
       
-      <Button 
-        startIcon={<ArrowLeft />} 
-        sx={{ mb: 3 }} 
-        onClick={() => navigate('/products')}
+      {/* Navegación superior */}
+      <Box 
+        sx={{ 
+          position: 'fixed',
+          top: 16,
+          left: 16,
+          right: 16,
+          zIndex: 20,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          bgcolor: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(8px)',
+          borderRadius: 2,
+          p: 1,
+        }}
       >
-        Back to Products
-      </Button>
-      
-      <Typography variant="h4" component="h1" gutterBottom>
-        Customize: {product.name}
-      </Typography>
-      
-      <Typography variant="body1" sx={{ mb: 4 }}>
-        {product.description}
-      </Typography>
-      
-      <Grid container spacing={4}>
-        {/* Product Preview */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, mb: 3, position: 'relative' }} id="preview-3d">
-            <Typography variant="h6" gutterBottom>Preview</Typography>
-            <Box
-              component="img"
-              src={product.images[0] || '/placeholder.jpg'}
-              alt={product.name}
-              sx={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: 1
-              }}
-            />
-            
-            {/* Customization overlay */}
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 20,
-                left: 20,
-                bgcolor: 'rgba(255,255,255,0.8)',
-                p: 2,
-                borderRadius: 1
-              }}
-            >
-              <Typography variant="subtitle2">Current Selections:</Typography>
-              <Typography variant="body2">Color: {customizations.color}</Typography>
-              <Typography variant="body2">Material: {customizations.material}</Typography>
-              {customizations.engravingText && (
-                <Typography variant="body2">Engraving: "{customizations.engravingText}"</Typography>
-              )}
-              <Typography variant="body2">Size: {customizations.size}</Typography>
-            </Box>
-          </Paper>
-          
-          <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold', mt: 2 }}>
-            ${product.price.toFixed(2)}
-          </Typography>
-          
-          <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-            <Button 
-              variant="outlined" 
-              startIcon={<Save />}
-              onClick={handleSaveCustomization}
-            >
-              Save Design
-            </Button>
-            <Button 
-              variant="contained" 
-              startIcon={<ShoppingCart />}
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </Button>
-          </Box>
-        </Grid>
+        <Button 
+          startIcon={<ArrowLeft />} 
+          onClick={() => navigate('/products')}
+          variant="text"
+          sx={{ color: 'text.primary' }}
+        >
+          Volver
+        </Button>
         
-        {/* Customization Options */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3 }}>
-            <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 3 }}>
-              <Tab label="Basic Options" />
-              <Tab label="Advanced Options" />
-            </Tabs>
-            
-            <Box hidden={activeTab !== 0}>
-              <Grid container spacing={3}>
-                {/* Gemstone selector */}
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1" gutterBottom>Stone Type</Typography>
-                  <Box id="gemstone-selector" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {['Emerald', 'Sapphire', 'Ruby', 'Diamond', 'Amethyst'].map((stone) => (
-                      <Button 
-                        key={stone}
-                        variant={customizations.color === stone ? 'contained' : 'outlined'}
-                        onClick={() => setCustomizations({...customizations, color: stone})}
-                        sx={{ minWidth: 100 }}
-                      >
-                        {stone}
-                      </Button>
-                    ))}
-                  </Box>
-                </Grid>
-                
-                {/* Metal selector */}
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1" gutterBottom>Metal</Typography>
-                  <Box id="metal-selector" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {['Gold', 'Silver', 'Platinum', 'Rose Gold', 'White Gold'].map((metal) => (
-                      <Button 
-                        key={metal}
-                        variant={customizations.material === metal ? 'contained' : 'outlined'}
-                        onClick={() => setCustomizations({...customizations, material: metal})}
-                        sx={{ minWidth: 100 }}
-                      >
-                        {metal}
-                      </Button>
-                    ))}
-                  </Box>
-                </Grid>
-                
-                {/* Setting selector */}
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1" gutterBottom>Setting Style</Typography>
-                  <Box id="setting-selector" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {['Prong', 'Bezel', 'Pave', 'Channel', 'Tension'].map((setting) => (
-                      <Button 
-                        key={setting}
-                        variant="outlined"
-                        sx={{ minWidth: 100 }}
-                      >
-                        {setting}
-                      </Button>
-                    ))}
-                  </Box>
-                </Grid>
-              </Grid>
-            </Box>
-            
-            <Box hidden={activeTab !== 1}>
-              <Grid container spacing={3}>
-                {/* Additional options */}
-                <Grid item xs={12} id="additional-options">
-                  <Typography variant="subtitle1" gutterBottom>Engraving</Typography>
-                  <TextField
-                    fullWidth
-                    label="Engraving Text"
-                    variant="outlined"
-                    value={customizations.engravingText}
-                    onChange={handleCustomizationChange('engravingText')}
-                    placeholder="Enter text to engrave"
-                    helperText="Up to 20 characters"
-                  />
-                </Grid>
-                
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1" gutterBottom>Size</Typography>
-                  <TextField
-                    type="number"
-                    label="Size"
-                    variant="outlined"
-                    value={customizations.size}
-                    onChange={handleSizeChange}
-                    InputProps={{
-                      inputProps: { 
-                        min: product.customizationOptions?.sizing?.min || 5, 
-                        max: product.customizationOptions?.sizing?.max || 15,
-                        step: product.customizationOptions?.sizing?.step || 0.5
-                      }
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
+        <Box>
+          <Button
+            startIcon={<Eye />}
+            onClick={() => setIs3DViewActive(!is3DViewActive)}
+            variant="text"
+            sx={{ mr: 1, color: 'text.primary' }}
+          >
+            {is3DViewActive ? '2D' : '3D'}
+          </Button>
+          <Button
+            startIcon={<Save />}
+            variant="text"
+            onClick={handleSaveToAtelier}
+            sx={{ mr: 1, color: 'text.primary' }}
+          >
+            Guardar
+          </Button>
+          <Button
+            startIcon={<MessageSquare />}
+            variant="contained"
+            color="primary"
+            onClick={() => setShowQuoteModal(true)}
+            sx={{
+              bgcolor: theme.palette.primary.main,
+              '&:hover': {
+                bgcolor: theme.palette.primary.dark,
+              },
+            }}
+          >
+            Cotizar
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Add Certification Viewer Modal */}
+      <Modal
+        open={showCertificate}
+        onClose={handleCloseCertificate}
+        aria-labelledby="certification-modal-title"
+        aria-describedby="certification-modal-description"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 2
+        }}
+      >
+        <Box sx={{ maxWidth: 900, width: '100%', maxHeight: '90vh', outline: 'none' }}>
+          {selectedEmeraldId && (
+            <CertificationViewer 
+              productId={selectedEmeraldId} 
+              productName={selectedEmeraldName || 'Esmeralda'} 
+              onClose={handleCloseCertificate} 
+            />
+          )}
+        </Box>
+      </Modal>
+
+      {/* Quote Request Modal */}
+      <QuoteRequestModal
+        open={showQuoteModal}
+        onClose={() => setShowQuoteModal(false)}
+        config={config}
+      />
+    </Box>
   );
 };
 

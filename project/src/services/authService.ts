@@ -1,14 +1,9 @@
-import api from './api';
+import { supabaseClient } from '../supabaseClient';
 import { LoginCredentials, RegisterData, User, ResetPasswordData, UpdatePasswordData } from '../types/user.types';
-import { AxiosResponse } from 'axios';
 
 interface AuthResponse {
   token: string;
   user: User;
-}
-
-interface ServerResponse {
-  response: AuthResponse;
 }
 
 class AuthError extends Error {
@@ -20,98 +15,161 @@ class AuthError extends Error {
 
 export const authService = {
   /**
-   * Inicia sesión con las credenciales proporcionadas
-   * @param credentials Credenciales de inicio de sesión
-   * @throws {AuthError} Si las credenciales son inválidas
+   * Inicia sesión con las credenciales proporcionadas usando Supabase Auth
    */
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    try {
-      // Buscamos el usuario que coincida con las credenciales
-      const response = await api.get<ServerResponse[]>('/auth_login', {
-        params: {
-          email: credentials.email,
-          password: credentials.password
-        }
-      });
-      
-      if (!response.data || response.data.length === 0) {
-        throw new AuthError('Credenciales inválidas');
-      }
-      
-      // Devolvemos la respuesta del primer usuario que coincida
-      return response.data[0].response;
-    } catch (error) {
-      if (error instanceof AuthError) {
-        throw error;
-      }
-      throw new AuthError('Error al iniciar sesión');
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: credentials.email,
+      password: credentials.password,
+    });
+    if (error || !data.session || !data.user) {
+      throw new AuthError(error?.message || 'Credenciales inválidas');
     }
+    // Obtener perfil extendido (incluyendo rol) desde profiles
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('id', data.user.id)
+      .single();
+    if (profileError) {
+      throw new AuthError('No se pudo obtener el perfil del usuario');
+    }
+    const user: User = {
+      id: data.user.id,
+      email: data.user.email!,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      avatar: profile.avatar_url,
+      role: profile.role,
+      createdAt: profile.created_at,
+      updatedAt: profile.updated_at,
+    };
+    return {
+      token: data.session.access_token,
+      user,
+    };
   },
-  
+
   /**
-   * Registra un nuevo usuario
-   * @param data Datos de registro
+   * Registra un nuevo usuario usando Supabase Auth
    */
   register: async (data: RegisterData): Promise<AuthResponse> => {
-    try {
-      // Para el mock, simplemente devolvemos la respuesta del usuario admin
-      const response = await api.get<ServerResponse>('/auth_login/1');
-      return response.data.response;
-    } catch (error) {
-      throw new AuthError('Error al registrar usuario');
+    const { data: signUpData, error } = await supabaseClient.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          first_name: data.firstName,
+          last_name: data.lastName,
+        },
+      },
+    });
+    if (error || !signUpData.session || !signUpData.user) {
+      throw new AuthError(error?.message || 'No se pudo registrar el usuario');
     }
+    // Insertar/obtener perfil extendido
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('id', signUpData.user.id)
+      .single();
+    if (profileError) {
+      throw new AuthError('No se pudo obtener el perfil del usuario');
+    }
+    const user: User = {
+      id: signUpData.user.id,
+      email: signUpData.user.email!,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      avatar: profile.avatar_url,
+      role: profile.role,
+      createdAt: profile.created_at,
+      updatedAt: profile.updated_at,
+    };
+    return {
+      token: signUpData.session.access_token,
+      user,
+    };
   },
-  
+
+  /**
+   * Obtiene el usuario actualmente autenticado y su perfil extendido
+   */
+  getCurrentUser: async (): Promise<User | null> => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session || !session.user) return null;
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .single();
+    if (profileError) {
+      throw new AuthError('No se pudo obtener el perfil del usuario');
+    }
+    return {
+      id: session.user.id,
+      email: session.user.email!,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      avatar: profile.avatar_url,
+      role: profile.role,
+      createdAt: profile.created_at,
+      updatedAt: profile.updated_at,
+    };
+  },
+
   /**
    * Cierra la sesión del usuario actual
    */
   logout: async (): Promise<void> => {
-    // No necesitamos hacer una llamada al servidor para logout
-    return Promise.resolve();
+    await supabaseClient.auth.signOut();
   },
-  
-  /**
-   * Obtiene el usuario actualmente autenticado
-   */
-  getCurrentUser: async (): Promise<User> => {
-    try {
-      // Para el mock, devolvemos el usuario admin
-      const response = await api.get<ServerResponse>('/auth_login/1');
-      return response.data.response.user;
-    } catch (error) {
-      throw new AuthError('Error al obtener el usuario actual');
-    }
-  },
-  
+
   /**
    * Solicita un restablecimiento de contraseña
-   * @param data Datos para restablecer contraseña
    */
   resetPassword: async (data: ResetPasswordData): Promise<{ message: string }> => {
-    // Simulación de éxito
-    return Promise.resolve({ message: 'Se ha enviado un correo para restablecer la contraseña' });
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(data.email);
+    if (error) throw new AuthError(error.message);
+    return { message: 'Se ha enviado un correo para restablecer la contraseña' };
   },
-  
+
   /**
    * Actualiza la contraseña del usuario
-   * @param data Datos para actualizar contraseña
    */
   updatePassword: async (data: UpdatePasswordData): Promise<{ message: string }> => {
-    // Simulación de éxito
-    return Promise.resolve({ message: 'Contraseña actualizada exitosamente' });
+    const { error } = await supabaseClient.auth.updateUser({ password: data.newPassword });
+    if (error) throw new AuthError(error.message);
+    return { message: 'Contraseña actualizada exitosamente' };
   },
-  
+
   /**
    * Actualiza el perfil del usuario
-   * @param data Datos del perfil en FormData
    */
   updateProfile: async (data: FormData): Promise<User> => {
-    try {
-      // Para el mock, devolvemos el usuario admin
-      const response = await api.get<ServerResponse>('/auth_login/1');
-      return response.data.response.user;
-    } catch (error) {
-      throw new AuthError('Error al actualizar el perfil');
-    }
+    // Aquí deberías mapear los campos de FormData a los campos de la tabla profiles
+    const updates: any = {};
+    data.forEach((value, key) => {
+      updates[key] = value;
+    });
+    const { data: user } = await supabaseClient.auth.getUser();
+    if (!user || !user.id) throw new AuthError('No hay usuario autenticado');
+    const { data: profile, error } = await supabaseClient
+      .from('profiles')
+      .update(updates)
+      .eq('id', user.id)
+      .select()
+      .single();
+    if (error) throw new AuthError('No se pudo actualizar el perfil');
+    return {
+      id: profile.id,
+      email: profile.email,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      avatar: profile.avatar_url,
+      role: profile.role,
+      createdAt: profile.created_at,
+      updatedAt: profile.updated_at,
+    };
   },
 };

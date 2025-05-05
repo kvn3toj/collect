@@ -11,27 +11,27 @@ export const onboardingSteps: OnboardingStep[] = [
   {
     title: "Welcome to Ethical Luxury",
     description: "ARE Trüst represents a new standard in emerald jewelry. Our commitment to ethical sourcing ensures every gem comes with a clear conscience and supports Colombian communities.",
-    image: "/images/tutorials/welcome.jpg"
+    image: "/images/c55fab42-534b-454b-8a13-960eefec01c4.jpg"
   },
   {
     title: "Discover Rare Beauty",
     description: "Explore our curated collection of extraordinary emeralds. Each stone is carefully selected for its unique character, vivid color, and exceptional clarity.",
-    image: "/images/tutorials/discover.jpg"
+    image: "/images/971e3276-02f5-4f11-b820-adc74a19fcd8.jpg"
   },
   {
     title: "Design Your Vision",
     description: "Our interactive jewelry configurator lets you create pieces as unique as you are. Select your emerald, setting style, and precious metal to bring your dream to life.",
-    image: "/images/tutorials/design.jpg"
+    image: "/images/e106bd1a-6000-45be-8308-a71bde2b1688.jpg"
   },
   {
     title: "Certified Excellence",
     description: "Every ARE Trüst emerald comes with GIA certification and complete traceability. Our gems aren't just beautiful - they're authentic investments with documented provenance.",
-    image: "/images/tutorials/certified.jpg"
+    image: "/images/4ef65ff2-0110-4ba2-887e-486f27a6b280.jpg"
   },
   {
     title: "Begin Your Journey",
     description: "The perfect piece awaits you. Explore our collections or create your custom design through our configurator. Experience the extraordinary world of fine emeralds.",
-    image: "/images/tutorials/journey.jpg"
+    image: "/images/bd8107b9-17e2-4faf-977d-dd5525c96623.jpg"
   }
 ];
 

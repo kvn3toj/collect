@@ -12,12 +12,11 @@ import useAuthStore from '../stores/authStore';
  */
 // Obtener la URL base de la API desde las variables de entorno
 // Usar explícitamente la variable de entorno para asegurar que esté disponible en producción
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const API_CONFIG: AxiosRequestConfig = {
-  // Siempre usar la URL completa si está disponible (en producción)
-  // Solo usar '/api' como fallback (en desarrollo local)
-  baseURL: API_BASE_URL || '/api',
+  // Siempre usar la URL definida
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -25,7 +24,7 @@ const API_CONFIG: AxiosRequestConfig = {
 };
 
 // Crear una instancia base de la API
-const api: AxiosInstance = axios.create(API_CONFIG);
+export const api: AxiosInstance = axios.create(API_CONFIG);
 
 // Interceptor de solicitudes para agregar token de autenticación
 api.interceptors.request.use(
@@ -65,4 +64,5 @@ api.interceptors.response.use(
   }
 );
 
+// Para mantener compatibilidad con código que pueda usar import api from '../services/api'
 export default api;
