@@ -51,6 +51,23 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_AUTH_DOMAIN': JSON.stringify(combinedEnv.VITE_AUTH_DOMAIN),
       'import.meta.env.VITE_PUBLIC_URL': JSON.stringify(combinedEnv.VITE_PUBLIC_URL),
       'import.meta.env.VITE_DEBUG_MODE': JSON.stringify(combinedEnv.VITE_DEBUG_MODE)
+    },
+    server: {
+      proxy: {
+        '/api': 'http://localhost:3001',
+        '/me': {
+          target: 'http://localhost:3001',
+          rewrite: (path) => path.replace(/^\/me/, '/api/auth/me')
+        },
+        '/cart': {
+          target: 'http://localhost:3001',
+          rewrite: (path) => path.replace(/^\/cart/, '/api/cart')
+        },
+        '/products': {
+          target: 'http://localhost:3001',
+          rewrite: (path) => path.replace(/^\/products/, '/api/products')
+        }
+      }
     }
   };
 });

@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Container } from '@mui/material';
 import Header from './Header';
 import Footer from './Footer';
 import PageTransition from '../common/PageTransition';
+import useAuthStore from '../../stores/authStore';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  useEffect(() => {
+    useAuthStore.getState().checkAuth();
+  }, []);
+
   return (
     <Box
       sx={{

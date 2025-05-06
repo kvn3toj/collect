@@ -27,8 +27,9 @@ const VideoBackground: React.FC<{ src: string }> = ({ src }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    // Auto play video when loaded
+    // Auto play video when loaded and set playback rate
     if (videoRef.current) {
+      videoRef.current.playbackRate = 0.75; // Hace el video 25% más lento
       videoRef.current.play().catch(error => {
         console.error("Video autoplay was prevented:", error);
       });

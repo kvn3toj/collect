@@ -1,0 +1,337 @@
+{
+  "products": [
+    {
+      "id": "lote-001",
+      "codigo": "LOTE-001",
+      "nombre": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
+      "descripcion": "Lote de 187 esmeraldas comerciales (F3) colombianas, 100.00 quilates totales.",
+      "descripcionCorta": "100ct (187pzs) Comercial F3",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "COMERCIAL_F3",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 100,
+      "piedras": 187,
+      "precio": 15000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": [
+        "/images/products/lote-1.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-1-comercial-f3-100ct"
+    },
+    {
+      "id": "lote-002",
+      "codigo": "LOTE-002",
+      "nombre": "Lote #2 Esmeraldas Finas (7 Piedras)",
+      "descripcion": "Lote de 7 esmeraldas finas (F2) colombianas, 31.80 quilates totales.",
+      "descripcionCorta": "31.8ct (7pzs) Finas F2",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "FINAS_F2",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 31.8,
+      "piedras": 7,
+      "precio": 190000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": [
+        "/images/products/lote-2.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-2-finas-f2-31ct"
+    },
+    {
+      "id": "lote-003",
+      "codigo": "LOTE-003",
+      "nombre": "Lote #3 Esmeraldas Extrafinas (6 Piedras)",
+      "descripcion": "Lote de 6 esmeraldas extrafinas (F1) colombianas, 17.70 quilates totales.",
+      "descripcionCorta": "17.7ct (6pzs) Extrafinas F1",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRAFINAS_F1",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 17.7,
+      "piedras": 6,
+      "precio": 330000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": [
+        "/images/products/lote-3.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-3-extrafinas-f1-17ct"
+    },
+    {
+      "id": "lote-004",
+      "codigo": "LOTE-004",
+      "nombre": "Lote #4 Esmeraldas Extrafinas (3 Piedras)",
+      "descripcion": "Lote de 3 esmeraldas extrafinas (F1) colombianas, 21.30 quilates totales.",
+      "descripcionCorta": "21.3ct (3pzs) Extrafinas F1",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRAFINAS_F1",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 21.3,
+      "piedras": 3,
+      "precio": 450000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": [
+        "/images/products/lote-4.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-4-extrafinas-f1-21ct"
+    },
+    {
+      "id": "lote-005",
+      "codigo": "LOTE-005",
+      "nombre": "Lote #5 Esmeraldas Comerciales (8 Piedras)",
+      "descripcion": "Lote de 8 esmeraldas comerciales (F3) colombianas, 12.85 quilates totales.",
+      "descripcionCorta": "12.85ct (8pzs) Comercial F3",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "COMERCIAL_F3",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 12.85,
+      "piedras": 8,
+      "precio": 2500,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": [
+        "/images/products/lote-5.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-5-comercial-f3-12ct"
+    },
+    {
+      "id": "lote-006",
+      "codigo": "LOTE-006",
+      "nombre": "Lote #6 Esmeraldas Extrafinas (2 Piedras)",
+      "descripcion": "Lote de 2 esmeraldas extrafinas (F1) colombianas, 15.10 quilates totales.",
+      "descripcionCorta": "15.1ct (2pzs) Extrafinas F1",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "EXTRAFINAS_F1",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 15.1,
+      "piedras": 2,
+      "precio": 250000,
+      "stock": 1,
+      "enStock": true,
+      "destacado": true,
+      "imagenesPrincipales": [
+        "/images/products/lote-6.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-6-extrafinas-f1-15ct"
+    },
+    {
+      "id": "lote-007",
+      "codigo": "LOTE-007",
+      "nombre": "Lote #7 Esmeraldas Canutillo (81 Piedras)",
+      "descripcion": "Lote de 81 esmeraldas canutillo (F1 y F2) colombianas, 144 quilates totales.",
+      "descripcionCorta": "144ct (81pzs) Canutillo F1/F2",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "CANUTILLO_F1_F2",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 144,
+      "piedras": 81,
+      "precio": null,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": [
+        "/images/products/lote-7.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-7-canutillo-f1f2-144ct"
+    },
+    {
+      "id": "lote-008",
+      "codigo": "LOTE-008",
+      "nombre": "Lote #8 Esmeralda Canutillo (1 Piedra)",
+      "descripcion": "Lote de 1 esmeralda canutillo (F2) colombiana, 5.51 quilates.",
+      "descripcionCorta": "5.51ct (1pzs) Canutillo F2",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "CANUTILLO_F2",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 5.51,
+      "piedras": 1,
+      "precio": null,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": [
+        "/images/products/lote-8.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-8-canutillo-f2-5ct"
+    },
+    {
+      "id": "lote-009",
+      "codigo": "LOTE-009",
+      "nombre": "Lote #9 Esmeralda Canutillo (1 Piedra) - Montada",
+      "descripcion": "Lote de 1 esmeralda canutillo (F2) colombiana montada, 32.80 quilates.",
+      "descripcionCorta": "32.8ct (1pzs) Canutillo F2 Montada",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "CANUTILLO_F2",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 32.8,
+      "piedras": 1,
+      "precio": null,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": [
+        "/images/products/lote-9.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-9-canutillo-f2-32ct"
+    },
+    {
+      "id": "lote-010",
+      "codigo": "LOTE-010",
+      "nombre": "Lote #10 Esmeraldas Comerciales (17 Piedras)",
+      "descripcion": "Lote de 17 esmeraldas comerciales (F3) colombianas, 53 quilates totales.",
+      "descripcionCorta": "53ct (17pzs) Comercial F3",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": "COMERCIAL_F3",
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": 53,
+      "piedras": 17,
+      "precio": null,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": [
+        "/images/products/lote-10.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-10-comercial-f3-53ct"
+    },
+    {
+      "id": "lote-011",
+      "codigo": "LOTE-011",
+      "nombre": "Lote #11 Esmeraldas (11 Piedras)",
+      "descripcion": "Lote de 11 esmeraldas colombianas.",
+      "descripcionCorta": "11pzs Esmeraldas",
+      "tipoJoya": "LOTE_GEMAS",
+      "tipoMetal": null,
+      "corteEsmeralda": "VARIOS",
+      "calidadEsmeralda": null,
+      "origenEsmeralda": "COLOMBIA",
+      "quilatesEsmeralda": null,
+      "piedras": 11,
+      "precio": null,
+      "stock": 1,
+      "enStock": true,
+      "destacado": false,
+      "imagenesPrincipales": [
+        "/images/products/lote-11.jpg"
+      ],
+      "imagenesDetalle": [],
+      "slug": "lote-11-esmeraldas-11pzs"
+    }
+  ],
+  "categories": [
+    {
+      "id": "rings",
+      "name": "Rings",
+      "slug": "rings",
+      "description": "Elegant rings for all occasions"
+    },
+    {
+      "id": "necklaces",
+      "name": "Necklaces",
+      "slug": "necklaces",
+      "description": "Stunning necklaces to complete your look"
+    },
+    {
+      "id": "bracelets",
+      "name": "Bracelets",
+      "slug": "bracelets",
+      "description": "Beautiful bracelets for your wrist"
+    },
+    {
+      "id": "earrings",
+      "name": "Earrings",
+      "slug": "earrings",
+      "description": "Elegant earrings to enhance your style"
+    }
+  ],
+  "products_categories": [
+    "rings",
+    "necklaces",
+    "bracelets",
+    "earrings"
+  ],
+  "metadata": {
+    "gem_info": {
+      "qualities": [
+        {
+          "id": "COMERCIAL_F3",
+          "nombre": "Comercial (F3)"
+        },
+        {
+          "id": "FINAS_F2",
+          "nombre": "Finas (F2)"
+        },
+        {
+          "id": "EXTRAFINAS_F1",
+          "nombre": "Extrafinas (F1)"
+        },
+        {
+          "id": "CANUTILLO_F1_F2",
+          "nombre": "Canutillo (F1 y F2)"
+        },
+        {
+          "id": "CANUTILLO_F2",
+          "nombre": "Canutillo (F2)"
+        }
+      ],
+      "origins": [
+        {
+          "id": "COLOMBIA",
+          "nombre": "Colombia"
+        }
+      ],
+      "cuts": [
+        {
+          "id": "VARIOS",
+          "nombre": "Varios"
+        },
+        {
+          "id": "BRUTO",
+          "nombre": "En Bruto"
+        }
+      ]
+    },
+    "jewelry_types": [
+      {
+        "id": "LOTE_GEMAS",
+        "nombre": "Lote de Gemas"
+      }
+    ]
+  }
+}

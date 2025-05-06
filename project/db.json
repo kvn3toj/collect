@@ -17,27 +17,123 @@
       "lastName": "User"
     }
   ],
+  "login": {
+    "email": "admin@aretrust.co",
+    "password": "password123",
+    "apiId": "auth"
+  },
+  "me": {
+    "id": 1,
+    "email": "admin@aretrust.co",
+    "firstName": "Admin",
+    "lastName": "User",
+    "role": "admin",
+    "avatar": null,
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  "cart": [
+    {
+      "id": "cart1",
+      "productId": "lote-001",
+      "name": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
+      "price": 15000,
+      "quantity": 1,
+      "image": "/images/products/lote-1.jpg",
+      "customizations": {},
+      "totalPrice": 15000,
+      "product": {
+        "id": "lote-001",
+        "codigo": "LOTE-001",
+        "name": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
+        "nombre": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
+        "description": "Lote de 187 esmeraldas comerciales (F3) colombianas, 100.00 quilates totales.",
+        "descripcion": "Lote de 187 esmeraldas comerciales (F3) colombianas, 100.00 quilates totales.",
+        "shortDescription": "100ct (187pzs) Comercial F3",
+        "descripcionCorta": "100ct (187pzs) Comercial F3",
+        "tipoJoya": "LOTE_GEMAS",
+        "tipoMetal": null,
+        "corteEsmeralda": "VARIOS",
+        "calidadEsmeralda": "COMERCIAL_F3",
+        "origenEsmeralda": "COLOMBIA",
+        "quilatesEsmeralda": 100,
+        "piedras": 187,
+        "price": 15000,
+        "precio": 15000,
+        "stock": 1,
+        "enStock": true,
+        "destacado": false,
+        "images": [
+          "/images/products/lote-1.jpg"
+        ],
+        "imagenesPrincipales": [
+          "/images/products/lote-1.jpg"
+        ],
+        "imagenesDetalle": [],
+        "category": "LOTE_GEMAS",
+        "tags": [
+          "esmeralda",
+          "comercial",
+          "lote"
+        ],
+        "slug": "lote-1-comercial-f3-100ct",
+        "specifications": {
+          "corte": "VARIOS",
+          "calidad": "COMERCIAL_F3",
+          "origen": "COLOMBIA",
+          "quilates": 100,
+          "piedras": 187
+        },
+        "createdAt": "2023-01-01T00:00:00.000Z",
+        "updatedAt": "2023-01-01T00:00:00.000Z"
+      }
+    }
+  ],
   "products": [
     {
       "id": "lote-001",
       "codigo": "LOTE-001",
+      "name": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
       "nombre": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
+      "description": "Lote de 187 esmeraldas comerciales (F3) colombianas, 100.00 quilates totales.",
       "descripcion": "Lote de 187 esmeraldas comerciales (F3) colombianas, 100.00 quilates totales.",
+      "shortDescription": "100ct (187pzs) Comercial F3",
       "descripcionCorta": "100ct (187pzs) Comercial F3",
       "tipoJoya": "LOTE_GEMAS",
       "tipoMetal": null,
       "corteEsmeralda": "VARIOS",
       "calidadEsmeralda": "COMERCIAL_F3",
       "origenEsmeralda": "COLOMBIA",
-      "quilatesEsmeralda": 100.00,
+      "quilatesEsmeralda": 100,
       "piedras": 187,
+      "price": 15000,
       "precio": 15000,
       "stock": 1,
       "enStock": true,
       "destacado": false,
-      "imagenesPrincipales": ["/images/products/lote-1.jpg"],
+      "images": [
+        "/images/products/lote-1.jpg"
+      ],
+      "imagenesPrincipales": [
+        "/images/products/lote-1.jpg"
+      ],
       "imagenesDetalle": [],
-      "slug": "lote-1-comercial-f3-100ct"
+      "category": "LOTE_GEMAS",
+      "tags": [
+        "esmeralda",
+        "comercial",
+        "lote"
+      ],
+      "slug": "lote-1-comercial-f3-100ct",
+      "specifications": {
+        "corte": "VARIOS",
+        "calidad": "COMERCIAL_F3",
+        "origen": "COLOMBIA",
+        "quilates": 100,
+        "piedras": 187
+      },
+      "createdAt": "2023-01-01T00:00:00.000Z",
+      "updatedAt": "2023-01-01T00:00:00.000Z"
     },
     {
       "id": "lote-002",
@@ -50,13 +146,15 @@
       "corteEsmeralda": "VARIOS",
       "calidadEsmeralda": "FINAS_F2",
       "origenEsmeralda": "COLOMBIA",
-      "quilatesEsmeralda": 31.80,
+      "quilatesEsmeralda": 31.8,
       "piedras": 7,
       "precio": 190000,
       "stock": 1,
       "enStock": true,
       "destacado": true,
-      "imagenesPrincipales": ["/images/products/lote-2.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-2.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-2-finas-f2-31ct"
     },
@@ -71,13 +169,15 @@
       "corteEsmeralda": "VARIOS",
       "calidadEsmeralda": "EXTRAFINAS_F1",
       "origenEsmeralda": "COLOMBIA",
-      "quilatesEsmeralda": 17.70,
+      "quilatesEsmeralda": 17.7,
       "piedras": 6,
       "precio": 330000,
       "stock": 1,
       "enStock": true,
       "destacado": true,
-      "imagenesPrincipales": ["/images/products/lote-3.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-3.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-3-extrafinas-f1-17ct"
     },
@@ -92,13 +192,15 @@
       "corteEsmeralda": "VARIOS",
       "calidadEsmeralda": "EXTRAFINAS_F1",
       "origenEsmeralda": "COLOMBIA",
-      "quilatesEsmeralda": 21.30,
+      "quilatesEsmeralda": 21.3,
       "piedras": 3,
       "precio": 450000,
       "stock": 1,
       "enStock": true,
       "destacado": true,
-      "imagenesPrincipales": ["/images/products/lote-4.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-4.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-4-extrafinas-f1-21ct"
     },
@@ -119,7 +221,9 @@
       "stock": 1,
       "enStock": true,
       "destacado": false,
-      "imagenesPrincipales": ["/images/products/lote-5.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-5.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-5-comercial-f3-12ct"
     },
@@ -134,13 +238,15 @@
       "corteEsmeralda": "VARIOS",
       "calidadEsmeralda": "EXTRAFINAS_F1",
       "origenEsmeralda": "COLOMBIA",
-      "quilatesEsmeralda": 15.10,
+      "quilatesEsmeralda": 15.1,
       "piedras": 2,
       "precio": 250000,
       "stock": 1,
       "enStock": true,
       "destacado": true,
-      "imagenesPrincipales": ["/images/products/lote-6.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-6.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-6-extrafinas-f1-15ct"
     },
@@ -161,7 +267,9 @@
       "stock": 1,
       "enStock": true,
       "destacado": false,
-      "imagenesPrincipales": ["/images/products/lote-7.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-7.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-7-canutillo-f1f2-144ct"
     },
@@ -182,7 +290,9 @@
       "stock": 1,
       "enStock": true,
       "destacado": false,
-      "imagenesPrincipales": ["/images/products/lote-8.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-8.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-8-canutillo-f2-5ct"
     },
@@ -197,13 +307,15 @@
       "corteEsmeralda": "VARIOS",
       "calidadEsmeralda": "CANUTILLO_F2",
       "origenEsmeralda": "COLOMBIA",
-      "quilatesEsmeralda": 32.80,
+      "quilatesEsmeralda": 32.8,
       "piedras": 1,
       "precio": null,
       "stock": 1,
       "enStock": true,
       "destacado": false,
-      "imagenesPrincipales": ["/images/products/lote-9.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-9.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-9-canutillo-f2-32ct"
     },
@@ -224,7 +336,9 @@
       "stock": 1,
       "enStock": true,
       "destacado": false,
-      "imagenesPrincipales": ["/images/products/lote-10.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-10.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-10-comercial-f3-53ct"
     },
@@ -245,7 +359,9 @@
       "stock": 1,
       "enStock": true,
       "destacado": false,
-      "imagenesPrincipales": ["/images/products/lote-11.jpg"],
+      "imagenesPrincipales": [
+        "/images/products/lote-11.jpg"
+      ],
       "imagenesDetalle": [],
       "slug": "lote-11-esmeraldas-11pzs"
     }
@@ -285,22 +401,133 @@
   "metadata": {
     "gem_info": {
       "qualities": [
-        { "id": "COMERCIAL_F3", "nombre": "Comercial (F3)" },
-        { "id": "FINAS_F2", "nombre": "Finas (F2)" },
-        { "id": "EXTRAFINAS_F1", "nombre": "Extrafinas (F1)" },
-        { "id": "CANUTILLO_F1_F2", "nombre": "Canutillo (F1 y F2)" },
-        { "id": "CANUTILLO_F2", "nombre": "Canutillo (F2)" }
+        {
+          "id": "COMERCIAL_F3",
+          "nombre": "Comercial (F3)"
+        },
+        {
+          "id": "FINAS_F2",
+          "nombre": "Finas (F2)"
+        },
+        {
+          "id": "EXTRAFINAS_F1",
+          "nombre": "Extrafinas (F1)"
+        },
+        {
+          "id": "CANUTILLO_F1_F2",
+          "nombre": "Canutillo (F1 y F2)"
+        },
+        {
+          "id": "CANUTILLO_F2",
+          "nombre": "Canutillo (F2)"
+        }
       ],
       "origins": [
-        { "id": "COLOMBIA", "nombre": "Colombia" }
+        {
+          "id": "COLOMBIA",
+          "nombre": "Colombia"
+        }
       ],
       "cuts": [
-        { "id": "VARIOS", "nombre": "Varios" },
-        { "id": "BRUTO", "nombre": "En Bruto" }
+        {
+          "id": "VARIOS",
+          "nombre": "Varios"
+        },
+        {
+          "id": "BRUTO",
+          "nombre": "En Bruto"
+        }
       ]
     },
     "jewelry_types": [
-      { "id": "LOTE_GEMAS", "nombre": "Lote de Gemas" }
+      {
+        "id": "LOTE_GEMAS",
+        "nombre": "Lote de Gemas"
+      }
     ]
-  }
+  },
+  "packaging-options": [
+    {
+      "id": "basic",
+      "name": "Empaque Básico",
+      "description": "Caja de cartón con protección básica",
+      "price": 0
+    },
+    {
+      "id": "premium",
+      "name": "Empaque Premium",
+      "description": "Caja de madera con forro de terciopelo",
+      "price": 50
+    },
+    {
+      "id": "luxury",
+      "name": "Empaque de Lujo",
+      "description": "Caja de cuero con certificado de autenticidad grabado",
+      "price": 150
+    }
+  ],
+  "insurance-options": [
+    {
+      "id": "none",
+      "name": "Sin Seguro",
+      "description": "No incluye seguro de envío",
+      "price": 0,
+      "coverage": 0
+    },
+    {
+      "id": "basic",
+      "name": "Seguro Básico",
+      "description": "Cubre hasta $10,000 USD en caso de pérdida o daño",
+      "price": 100,
+      "coverage": 10000
+    },
+    {
+      "id": "premium",
+      "name": "Seguro Premium",
+      "description": "Cubre hasta $50,000 USD en caso de pérdida o daño",
+      "price": 350,
+      "coverage": 50000
+    }
+  ],
+  "account": {
+    "id": 1,
+    "email": "admin@aretrust.co",
+    "firstName": "Admin",
+    "lastName": "User",
+    "address": {
+      "street": "Calle Principal 123",
+      "city": "Madrid",
+      "state": "Madrid",
+      "country": "España",
+      "postalCode": "28001"
+    },
+    "phone": "+34 912 123 456"
+  },
+  "account-orders": [
+    {
+      "id": "ORD-2023-001",
+      "date": "2023-12-15T10:30:00.000Z",
+      "status": "completed",
+      "total": 15150,
+      "items": [
+        {
+          "productId": "lote-001",
+          "name": "Lote #1 Esmeraldas Comerciales (187 Piedras)",
+          "price": 15000,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "method": "express",
+        "cost": 150,
+        "address": {
+          "street": "Calle Principal 123",
+          "city": "Madrid",
+          "state": "Madrid",
+          "country": "España",
+          "postalCode": "28001"
+        }
+      }
+    }
+  ]
 }

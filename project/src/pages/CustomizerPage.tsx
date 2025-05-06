@@ -60,12 +60,18 @@ const CustomizerPage = () => {
   const [selectedEmeraldName, setSelectedEmeraldName] = useState<string | null>(null);
 
   // Fetch configurator options
-  const { data: options, isLoading: optionsLoading, error } = useQuery({
+  const { data, isLoading: optionsLoading, error } = useQuery({
     queryKey: ['configuratorOptions'],
     queryFn: async () => {
-      const response = await api.get('/api/configurator/options');
-      return response.data;
+      try {
+        const response = await api.get('/configurator/options');
+        return response.data;
+      } catch (err) {
+        console.error('Error fetching configurator options:', err);
+        throw err;
+      }
     },
+    staleTime: 60 * 60 * 1000,
   });
 
   useEffect(() => {
@@ -273,7 +279,7 @@ const CustomizerPage = () => {
                     boxShadow: { xs: 'none', md: '-4px 0 20px rgba(0,0,0,0.05)' },
                   }}
                 >
-                  <ConfiguratorControls options={options} isLoading={optionsLoading} />
+                  <ConfiguratorControls options={data} isLoading={optionsLoading} />
                 </Box>
               </motion.div>
             )}

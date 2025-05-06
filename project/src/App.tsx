@@ -6,6 +6,7 @@ import { Toaster } from 'sonner';
 import theme from './theme';
 import AppRoutes from './routes/AppRoutes';
 import Layout from './components/layout/Layout';
+import { MicroTutorialProvider } from './components/tutorial/MicroTutorialContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,21 +22,26 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <Layout>
-            <AppRoutes />
-          </Layout>
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              style: {
-                background: theme.palette.background.paper,
-                color: theme.palette.text.primary,
-                border: `1px solid ${theme.palette.divider}`
-              }
-            }}
-          />
-        </BrowserRouter>
+        <MicroTutorialProvider>
+          <BrowserRouter future={{ 
+            v7_startTransition: true, 
+            v7_relativeSplatPath: true 
+          }}>
+            <Layout>
+              <AppRoutes />
+            </Layout>
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                style: {
+                  background: theme.palette.background.paper,
+                  color: theme.palette.text.primary,
+                  border: `1px solid ${theme.palette.divider}`
+                }
+              }}
+            />
+          </BrowserRouter>
+        </MicroTutorialProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

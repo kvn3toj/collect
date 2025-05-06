@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
@@ -87,7 +87,7 @@ const CartPage = () => {
 
   // Calcular subtotal
   const subtotal = cartItems.reduce(
-    (total, item) => total + (item.totalPrice ?? (item.product?.price * item.quantity)), 0
+    (total, item) => total + (item.totalPrice ?? (item.product?.price || 0) * item.quantity), 0
   );
   
   // Calcular impuestos (10%)
@@ -126,6 +126,23 @@ const CartPage = () => {
   const handleContinueShopping = () => {
     navigate('/products');
   };
+
+  // Logging para debuggear problemas con productos faltantes
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      // Verificar elementos sin producto o con producto incompleto
+      const itemsWithMissingProduct = cartItems.filter(item => 
+        !item.product || !item.product.images || !item.product.price
+      );
+      
+      if (itemsWithMissingProduct.length > 0) {
+        console.warn('⚠️ Elementos del carrito con datos de producto incompletos:', itemsWithMissingProduct);
+        
+        // Log de todos los elementos para comparación
+        console.log('Todos los elementos del carrito:', cartItems);
+      }
+    }
+  }, [cartItems]);
 
   // Si está cargando
   if (isLoading) {
@@ -335,8 +352,8 @@ const CartPage = () => {
                       {/* Imagen */}
                       <Box 
                         component="img"
-                        src={item.product.images?.[0]}
-                        alt={item.product.name}
+                        src={item.product?.images?.[0] || '/assets/placeholder-product.svg'}
+                        alt={item.product?.name || 'Product'}
                         sx={{ 
                           width: 80,
                           height: 80,
@@ -357,7 +374,7 @@ const CartPage = () => {
                             fontSize: { xs: '1rem', md: '1.1rem' }
                           }}
                         >
-                          {item.product.name}
+                          {item.product?.name || 'Product'}
                         </Typography>
                         
                         {item.customizations && Object.keys(item.customizations).length > 0 && (
@@ -383,7 +400,7 @@ const CartPage = () => {
                             mb: 1
                           }}
                         >
-                          Unit Price: ${(item.product.discountPrice || item.product.price).toFixed(2)}
+                          Unit Price: ${((item.product?.discountPrice || item.product?.price || 0)).toFixed(2)}
                         </Typography>
                       </Box>
                     </Box>
@@ -456,7 +473,7 @@ const CartPage = () => {
                           color: theme.palette.text.primary
                         }}
                       >
-                        ${(item.totalPrice ?? (item.product.price * item.quantity)).toFixed(2)}
+                        ${(item.totalPrice ?? (item.product?.price || 0) * item.quantity).toFixed(2)}
                       </Typography>
                       
                       <IconButton

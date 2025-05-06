@@ -35,6 +35,7 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
+    // Eliminar lógica de anteponer /api para evitar rutas duplicadas
     return config;
   },
   (error: AxiosError): Promise<AxiosError> => {

@@ -39,13 +39,29 @@ export interface QuoteResponse {
 }
 
 export const quoteService = {
-  requestQuote: async (data: QuoteRequest): Promise<QuoteResponse> => {
-    const response = await api.post<QuoteResponse>('/api/quotes/request', data);
-    return response.data;
+  /**
+   * Solicita una cotización personalizada
+   */
+  async requestQuote(data: QuoteRequest): Promise<QuoteResponse> {
+    try {
+      const response = await api.post<QuoteResponse>('/api/quotes/request', data);
+      return response.data;
+    } catch (error) {
+      console.error('Error requesting quote:', error);
+      throw error;
+    }
   },
 
-  getQuoteStatus: async (quoteId: string): Promise<QuoteResponse> => {
-    const response = await api.get<QuoteResponse>(`/api/quotes/${quoteId}`);
-    return response.data;
+  /**
+   * Obtiene una cotización por su ID
+   */
+  async getQuoteById(quoteId: string): Promise<QuoteResponse> {
+    try {
+      const response = await api.get<QuoteResponse>(`/api/quotes/${quoteId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching quote ${quoteId}:`, error);
+      throw error;
+    }
   }
 }; 

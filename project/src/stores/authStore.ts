@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { AuthState, LoginCredentials, RegisterData, User } from '../types/user.types';
 import { authService } from '../services/authService';
+import { api } from '../services/api';
 
 interface AuthStore extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -20,20 +21,25 @@ const useAuthStore = create<AuthStore>()(
       isLoading: false,
       error: null,
 
-      login: async (credentials: LoginCredentials) => {
+      login: async ({ email, password }) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await authService.login(credentials);
+          const response = await api.post('/api/auth/login', { email, password });
+          const { token, user } = response.data;
           set({
-            token: response.token,
-            user: response.user,
+            token,
+            user,
             isAuthenticated: true,
             isLoading: false,
+            error: null,
           });
         } catch (error) {
           set({
+            token: null,
+            user: null,
+            isAuthenticated: false,
             isLoading: false,
-            error: error instanceof Error ? error.message : 'Login failed',
+            error: 'Login failed',
           });
           throw error;
         }
@@ -68,19 +74,33 @@ const useAuthStore = create<AuthStore>()(
       },
 
       checkAuth: async () => {
-        const { token, user } = get();
-        if (!token || !user) {
-          return false;
-        }
+        set({ isLoading: true });
         try {
           const currentUser = await authService.getCurrentUser();
-          set({ user: currentUser, isAuthenticated: true });
-          return true;
+          if (currentUser) {
+            set({
+              user: currentUser,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            return true;
+          } else {
+            set({
+              user: null,
+              token: null,
+              isAuthenticated: false,
+              isLoading: false,
+              error: null,
+            });
+            return false;
+          }
         } catch (error) {
           set({
             user: null,
             token: null,
             isAuthenticated: false,
+            isLoading: false,
             error: error instanceof Error ? error.message : 'Authentication check failed',
           });
           return false;

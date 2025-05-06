@@ -1,5 +1,6 @@
 import { supabaseClient } from '../supabaseClient';
 import { LoginCredentials, RegisterData, User, ResetPasswordData, UpdatePasswordData } from '../types/user.types';
+import { api } from './api';
 
 interface AuthResponse {
   token: string;
@@ -18,6 +19,16 @@ export const authService = {
    * Inicia sesión con las credenciales proporcionadas usando Supabase Auth
    */
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    try {
+      // Para desarrollo con json-server
+      const response = await api.post('/api/auth/login', credentials);
+      return response.data;
+    } catch (error) {
+      throw new AuthError('Credenciales inválidas');
+    }
+    
+    // Para producción con Supabase
+    /*
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: credentials.email,
       password: credentials.password,
@@ -48,6 +59,7 @@ export const authService = {
       token: data.session.access_token,
       user,
     };
+    */
   },
 
   /**
@@ -96,6 +108,16 @@ export const authService = {
    * Obtiene el usuario actualmente autenticado y su perfil extendido
    */
   getCurrentUser: async (): Promise<User | null> => {
+    try {
+      // Para desarrollo con json-server
+      const response = await api.get('/api/auth/me');
+      return response.data;
+    } catch (error) {
+      return null;
+    }
+    
+    // Para producción con Supabase
+    /*
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session || !session.user) return null;
     const { data: profile, error: profileError } = await supabaseClient
@@ -116,6 +138,7 @@ export const authService = {
       createdAt: profile.created_at,
       updatedAt: profile.updated_at,
     };
+    */
   },
 
   /**

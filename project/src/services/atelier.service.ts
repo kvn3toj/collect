@@ -35,9 +35,17 @@ export interface UpdateDesignPayload {
 }
 
 const atelierService = {
-  getMyDesigns: async (): Promise<Design[]> => {
-    const { data } = await api.get('/api/designs/mine');
-    return data;
+  /**
+   * Obtiene todos los diseños propios del usuario autenticado
+   */
+  async getMyDesigns(): Promise<Design[]> {
+    try {
+      const { data } = await api.get('/api/designs/mine');
+      return data;
+    } catch (error) {
+      console.error('Error fetching user designs:', error);
+      throw error;
+    }
   },
 
   updateDesign: async (designId: string, payload: UpdateDesignPayload): Promise<Design> => {
@@ -45,8 +53,16 @@ const atelierService = {
     return data;
   },
 
-  deleteDesign: async (designId: string): Promise<void> => {
-    await api.delete(`/api/designs/${designId}`);
+  /**
+   * Elimina un diseño personalizado
+   */
+  async deleteDesign(designId: string): Promise<void> {
+    try {
+      await api.delete(`/api/designs/${designId}`);
+    } catch (error) {
+      console.error(`Error deleting design ${designId}:`, error);
+      throw error;
+    }
   }
 };
 
